@@ -20,7 +20,7 @@
     <string name="retrieve_search_settings">Retrieve search settings</string>
     <string name="connect_fail">connection failed</string>
     <string name="active_disconnected">ECG 연결이 해제되었습니다.</string>
-    <string name="disconnected">Connection disconnect</string>
+    <string name="disconnected">ECG 연결이 해제되었습니다.</string>
     <string name="connect">Connect</string>
     <string name="connected">Connected</string>
     <string name="disconnect">ECG Disconnect</string>

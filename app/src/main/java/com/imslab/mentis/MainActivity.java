@@ -86,10 +86,10 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
     ImageView bgapp,img_blue;
     Switch ecgswitch, e4switch;
-    LinearLayout splashtext, hometext,firstmain;
+    LinearLayout splashtext, firstmain;
     Animation frombottom;
     Button goUnity,calli;
-    TextView readytext,e4connected;
+    TextView e4connected;
     TextView bletitle;
     ListView blelist;
     AlertDialog bleDialog;
@@ -299,13 +299,12 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
         frombottom= AnimationUtils.loadAnimation(this,R.anim.frombottom);
         splashtext = (LinearLayout) findViewById(R.id.splashtext);
-        hometext = (LinearLayout) findViewById(R.id.hometext);
+       // hometext = (LinearLayout) findViewById(R.id.hometext);
         firstmain = (LinearLayout) findViewById(R.id.firstmain);
         bgapp=(ImageView) findViewById(R.id.bgapp);
         ecgswitch = (Switch) findViewById(R.id.ecgswitch);
         e4switch = (Switch) findViewById(R.id.e4switch);
         goUnity = (Button) findViewById((R.id.goUnity));
-        readytext = (TextView) findViewById(R.id.readytext);
         calli = (Button) findViewById(R.id.calli);
         //
 
@@ -317,7 +316,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         //메인창을 보이기 위한 애니메이션
         bgapp.animate().translationY(-1700).setDuration(800).setStartDelay(300);
         splashtext.animate().translationY(140).alpha(0).setDuration(800).setStartDelay(300);
-        hometext.startAnimation(frombottom);
         firstmain.startAnimation(frombottom);
     }
     // 핸들러로 전달할 runnable 객체. 수신 스레드 실행.
@@ -679,7 +677,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             mybleDevice = bleDevice;
                             if(state0)
                             {
-                                updateLabel(readytext,"센서연결이 완료되었습니다.");
+                                //updateLabel(readytext,"센서연결이 완료되었습니다.");
                             }
                         }
                         if(value.length!=237||!state0||bvp_list.size()==0)
@@ -1086,7 +1084,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             ConnectedE4();
             if(isECGStart)
             {
-                updateLabel(readytext,"센서연결이 완료되었습니다.");
+               // updateLabel(readytext,"센서연결이 완료되었습니다.");
 
             }
             // The device manager disconnected from a device
@@ -1227,7 +1225,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 bleDialog.dismiss();
                 progressDialog.dismiss();
                 ecgswitch.setChecked(false);
-                updateLabel( readytext, "센서를 연결해주세요.");
+             //   updateLabel( readytext, "센서를 연결해주세요.");
 
             }
         });
@@ -1265,7 +1263,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 e4Dialog.dismiss();
 
                 if(e4switch.isChecked()) e4switch.setChecked(false);
-                updateLabel( readytext, "센서를 연결해주세요.");
+              //  updateLabel( readytext, "센서를 연결해주세요.");
 
             }
         });

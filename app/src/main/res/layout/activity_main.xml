@@ -5,8 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGray"
     android:fontFamily="@font/nanumsquareeb"
     tools:context=".MainActivity">
+// splash 화면 디자인 시작
     <LinearLayout
         android:id="@+id/splashtext"
         android:elevation="6dp"
@@ -58,202 +60,9 @@
             />
 
     </LinearLayout>
+//splash 화면 디자인 끝
 
-    <LinearLayout
-        android:id="@+id/hometext"
-        android:gravity="left"
-        android:elevation="6dp"
-
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop = "0dp"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <Button
-            android:id="@+id/goUnity"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="10dp"
-
-            android:layout_gravity="right|center_horizontal"
-            android:layout_marginEnd="3dp"
-            android:background="@mipmap/goarrow" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="시작하기"
-            android:textColor="#fff"
-            android:textSize="13sp"
-            android:textStyle="normal"
-            android:fontFamily="@font/nanumsquareb"
-            />
-
-        <TextView
-            android:layout_marginTop = "10dp"
-            android:id="@+id/readytext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-
-            android:text="센서에 연결해주세요."
-            android:textColor="#fff"
-            android:textSize="28sp"
-            android:textStyle="normal"
-            android:fontFamily="@font/nanumsquareb"
-
-            />
-        <TextView
-            android:layout_marginTop = "10dp"
-            android:id="@+id/nametext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-
-            android:text="계정없음"
-            android:drawableLeft="@mipmap/user_icon"
-            android:drawablePadding="5dp"
-            android:gravity="center_vertical"
-            android:textColor="#fff"
-            android:textSize="15sp"
-            android:textStyle="normal"
-            android:fontFamily="@font/nanumsquareb"
-
-            />
-
-
-
-
-
-
-
-    <LinearLayout
-        android:id="@+id/firstmain"
-        android:gravity="center"
-        android:elevation="6dp"
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop = "85dp"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-            <LinearLayout
-                android:id="@+id/e4band"
-                android:gravity="center"
-                android:elevation="6dp"
-                android:background="@mipmap/whitetitle"
-                android:layout_width="300dp"
-                android:layout_height="65dp"
-                android:orientation="horizontal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                >
-
-                <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:text="E4 BAND"
-                    android:textColor="#000000"
-                    android:textSize="19sp"
-                    android:textStyle="normal"
-                    android:fontFamily="@font/nanumsquareb"
-
-                    />
-                <Switch
-                    android:id="@+id/e4switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="25dp"
-                    android:track="@drawable/switch_track_selector"
-                    android:thumb="@drawable/switch_thumb"/>
-
-
-                 </LinearLayout>
-
-<!--        <TextView-->
-<!--            android:layout_width="200dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="center|top"-->
-<!--            android:text="ECG PATCH"-->
-<!--            android:textColor="#000000"-->
-<!--            android:textSize="20sp"-->
-<!--            android:textStyle="normal"-->
-
-<!--            />-->
-
-
-                <LinearLayout
-                    android:background="@mipmap/whitetitle"
-                    android:layout_width="300dp"
-                    android:layout_height="65dp"
-                    android:id="@+id/ecgpatch"
-                    android:gravity="center"
-                    android:elevation="6dp"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="25dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    >
-
-                    <TextView
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text="ECG PATCH"
-                        android:fontFamily="@font/nanumsquareb"
-                        android:textColor="#000000"
-                        android:textSize="19sp"
-                        android:textStyle="normal" />
-                    <Switch
-                        android:id="@+id/ecgswitch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="25dp"
-                        android:track="@drawable/switch_track_selector"
-                        android:thumb="@drawable/switch_thumb"
-                        />
-
-
-                </LinearLayout>
-    </LinearLayout>
-
-        <ListView
-            android:layout_marginTop="20dp"
-            android:id="@+id/list_device"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="0.5dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:fontFamily="@font/nanumsquarer"
-            android:scrollbars="vertical" />
-
-     </LinearLayout>
-
-
-
-    <Button
-        android:id="@+id/calli"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.1"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Start Callibration"
-
-
-        />
-
+//배경 이미지 슬라이드 할 거
     <ImageView
         android:id="@+id/bgapp"
         android:layout_width="match_parent"
@@ -267,4 +76,329 @@
 
         />
 
+//메인 시작
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        >-->
+        <LinearLayout
+            android:id="@+id/firstmain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                >
+                <TextView
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/main_title"
+                    android:text="My Dashboard"
+                    android:textSize="30sp"
+                    android:textColor="#FFFFFF"
+                   />
+                <TextView
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_below="@id/main_title"
+                    android:text="계정없음"
+                    android:drawableLeft="@mipmap/user_icon"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:textSize="19sp"
+                    android:textColor="#FFFF"
+                    />
+
+                <Button
+                    android:id="@+id/goSetting"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@mipmap/usericon" />
+            </RelativeLayout>
+            //센서연결파트
+            <android.support.v7.widget.CardView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="28dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                app:cardBackgroundColor="@color/panel2"
+
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="25dp"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Devices"
+                            android:textColor="@color/mygray"
+                            android:textSize="18sp"
+
+                            />
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:id="@+id/calli"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                           android:text="Callibration"
+                            android:textSize="13sp"
+                            android:padding="7dp"
+                            android:background="@drawable/rounded"
+                            />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ecgpatch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="2dp"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        >
+
+                        <TextView
+                            android:layout_width="130dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="30dp"
+                            android:text="ECG PATCH"
+                            android:textColor="@color/mygray"
+                            android:textSize="15sp"
+                            android:textStyle="normal" />
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+                        <Switch
+                            android:id="@+id/ecgswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp"
+                            android:track="@drawable/switch_track_selector"
+                            android:thumb="@drawable/switch_thumb"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:id="@+id/e4patch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:padding="2dp"
+                        android:orientation="horizontal"
+                            >
+
+                            <TextView
+                                android:layout_width="130dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:layout_marginLeft="30dp"
+
+                                android:text="E4 Band"
+                                android:textColor="@color/mygray"
+                                android:textSize="15sp"
+                                android:textStyle="normal" />
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+                            <Switch
+                                android:id="@+id/e4switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="25dp"
+                                android:track="@drawable/switch_track_selector"
+                                android:thumb="@drawable/switch_thumb"
+                                />
+
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <GridLayout
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="12dp"
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:columnCount="2"
+                android:rowCount="2"
+                android:alignmentMode="alignMargins"
+                android:columnOrderPreserved="false"
+                >
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="3dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_margin="12dp"
+                    app:cardBackgroundColor="@color/panel1"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:src="@mipmap/ecghearticon"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:textColor="#6f6f6f"
+                            android:textSize="16sp"
+                            android:textAlignment="center"
+                            android:text="ECG Patch\n모니터"
+                            />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="3dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_margin="12dp"
+                    app:cardBackgroundColor="@color/panel1"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:src="@mipmap/e4icon2"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:textAlignment="center"
+                            android:textColor="#6f6f6f"
+                            android:textSize="16sp"
+                            android:text="E4 Band\n모니터"
+                            />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="3dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/panel1"
+                    android:layout_margin="12dp"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:src="@mipmap/charticon"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:textColor="#6f6f6f"
+                            android:textSize="16sp"
+                            android:textAlignment="center"
+                            android:text="Stress\n분석"
+                            />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="3dp"
+                    app:cardBackgroundColor="@color/panel1"
+                    app:cardCornerRadius="12dp"
+                    android:layout_margin="12dp"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:orientation="vertical">
+                        <Button
+                            android:id="@+id/goUnity"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:background="@mipmap/guruicon"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:textColor="#6f6f6f"
+                            android:textSize="16sp"
+                            android:text="호흡 치료"
+                            />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+            </GridLayout>
+        </LinearLayout>
+<!--    </ScrollView>-->
 </android.support.constraint.ConstraintLayout>
