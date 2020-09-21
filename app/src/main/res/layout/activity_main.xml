@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fontFamily="@font/nanumsquareeb"
+    tools:context=".MainActivity">
+    <LinearLayout
+        android:id="@+id/splashtext"
+        android:elevation="6dp"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="250dp"
+        android:weightSum="8"
+
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MentIS"
+            android:textColor="#fff"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:fontFamily="@font/nanumsquareeb"
+            />
+        <TextView
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Mental Innovation Solution"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="normal"
+            android:fontFamily="@font/nanumsquareb"
+
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POSTECH IMS LAB"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:textAlignment="center"
+            android:layout_marginTop="240dp"
+            android:fontFamily="@font/nanumsquareb"
+
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/hometext"
+        android:gravity="left"
+        android:elevation="6dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop = "0dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <Button
+            android:id="@+id/goUnity"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="10dp"
+
+            android:layout_gravity="right|center_horizontal"
+            android:layout_marginEnd="3dp"
+            android:background="@mipmap/goarrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="시작하기"
+            android:textColor="#fff"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:fontFamily="@font/nanumsquareb"
+            />
+
+        <TextView
+            android:layout_marginTop = "10dp"
+            android:id="@+id/readytext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+
+            android:text="센서에 연결해주세요."
+            android:textColor="#fff"
+            android:textSize="28sp"
+            android:textStyle="normal"
+            android:fontFamily="@font/nanumsquareb"
+
+            />
+        <TextView
+            android:layout_marginTop = "10dp"
+            android:id="@+id/nametext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+
+            android:text="계정없음"
+            android:drawableLeft="@mipmap/user_icon"
+            android:drawablePadding="5dp"
+            android:gravity="center_vertical"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:textStyle="normal"
+            android:fontFamily="@font/nanumsquareb"
+
+            />
+
+
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/firstmain"
+        android:gravity="center"
+        android:elevation="6dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop = "85dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+            <LinearLayout
+                android:id="@+id/e4band"
+                android:gravity="center"
+                android:elevation="6dp"
+                android:background="@mipmap/whitetitle"
+                android:layout_width="300dp"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="E4 BAND"
+                    android:textColor="#000000"
+                    android:textSize="19sp"
+                    android:textStyle="normal"
+                    android:fontFamily="@font/nanumsquareb"
+
+                    />
+                <Switch
+                    android:id="@+id/e4switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:track="@drawable/switch_track_selector"
+                    android:thumb="@drawable/switch_thumb"/>
+
+
+                 </LinearLayout>
+
+<!--        <TextView-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center|top"-->
+<!--            android:text="ECG PATCH"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textStyle="normal"-->
+
+<!--            />-->
+
+
+                <LinearLayout
+                    android:background="@mipmap/whitetitle"
+                    android:layout_width="300dp"
+                    android:layout_height="65dp"
+                    android:id="@+id/ecgpatch"
+                    android:gravity="center"
+                    android:elevation="6dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="25dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    >
+
+                    <TextView
+                        android:layout_width="150dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="ECG PATCH"
+                        android:fontFamily="@font/nanumsquareb"
+                        android:textColor="#000000"
+                        android:textSize="19sp"
+                        android:textStyle="normal" />
+                    <Switch
+                        android:id="@+id/ecgswitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="25dp"
+                        android:track="@drawable/switch_track_selector"
+                        android:thumb="@drawable/switch_thumb"
+                        />
+
+
+                </LinearLayout>
+    </LinearLayout>
+
+        <ListView
+            android:layout_marginTop="20dp"
+            android:id="@+id/list_device"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="0.5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:fontFamily="@font/nanumsquarer"
+            android:scrollbars="vertical" />
+
+     </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/calli"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.1"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Start Callibration"
+
+
+        />
+
+    <ImageView
+        android:id="@+id/bgapp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/front_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
+</android.support.constraint.ConstraintLayout>

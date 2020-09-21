@@ -1,0 +1,195 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+	package
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:70-98
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:99-145
+	android:versionCode
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:1-38:12
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:11-69
+	android:installLocation
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:2:146-186
+supports-screens
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:3:3-163
+	android:largeScreens
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:3:78-105
+	android:smallScreens
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:3:21-48
+	android:normalScreens
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:3:49-77
+	android:xlargeScreens
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:3:106-134
+	android:anyDensity
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:3:135-160
+application
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:4:3-26:17
+	android:theme
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:4:16-57
+activity#com.unity3d.player.UnityPlayerActivity
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:5:5-7:16
+	android:screenOrientation
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:5:70-106
+	android:launchMode
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:5:107-138
+	android:hardwareAccelerated
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:5:321-356
+	android:configChanges
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:5:139-320
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:5:15-68
+meta-data#unityplayer.UnityActivity
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:6:7-82
+	android:value
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:6:59-79
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:6:18-58
+receiver#com.ims.e4receiver.E4BroadcastReceiver
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:8:5-13:16
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:8:15-68
+intent-filter#action:name:com.ims.empalink.sendintent
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:9:7-12:23
+action#com.ims.empalink.sendintent
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:10:9-11:18
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:10:17-59
+meta-data#unity.splash-mode
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:14:5-69
+	android:value
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:14:49-66
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:14:16-48
+meta-data#unity.splash-enable
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:15:5-74
+	android:value
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:15:51-71
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:15:16-50
+meta-data#unity.build-id
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:16:5-101
+	android:value
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:16:46-98
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:16:16-45
+receiver#com.unity.androidnotifications.UnityNotificationManager
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:17:5-112
+	android:exported
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:17:86-109
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:17:15-85
+receiver#com.unity.androidnotifications.UnityNotificationRestartOnBootReceiver
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:18:5-22:16
+	android:enabled
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:18:100-123
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:18:15-99
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:19:7-21:23
+action#android.intent.action.BOOT_COMPLETED
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:20:9-71
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:20:17-68
+meta-data#custom_notification_android_activity
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:23:5-125
+	android:value
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:23:68-122
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:23:16-67
+meta-data#unityplayer.SkipPermissionsDialog
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:24:5-88
+	android:value
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:24:65-85
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:24:16-64
+meta-data#com.google.ar.core
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:25:5-77
+	android:value
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:25:50-74
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:25:16-49
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:27:3-79
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:27:20-76
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:28:3-65
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:28:20-62
+uses-feature#0x00020000
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:29:3-52
+	android:glEsVersion
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:29:17-49
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:30:3-77
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:30:20-74
+uses-feature#android.hardware.location.gps
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:31:3-89
+	android:required
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:31:62-86
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:31:17-61
+uses-feature#android.hardware.location
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:32:3-85
+	android:required
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:32:58-82
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:32:17-57
+uses-feature#android.hardware.touchscreen
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:33:3-88
+	android:required
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:33:61-85
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:33:17-60
+uses-feature#android.hardware.touchscreen.multitouch
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:34:3-99
+	android:required
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:34:72-96
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:34:17-71
+uses-feature#android.hardware.touchscreen.multitouch.distinct
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:35:3-108
+	android:required
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:35:81-105
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:35:17-80
+uses-permission#android.permission.CAMERA
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:36:3-63
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:36:20-60
+uses-feature#android.hardware.camera.ar
+ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:37:3-85
+	android:required
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:37:59-82
+	android:name
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml:37:17-58
+uses-sdk
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+		ADDED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\heeye\Desktop\ar_git\IMS\MentIS\MentIS\unityLibrary\src\main\AndroidManifest.xml
