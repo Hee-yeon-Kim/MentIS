@@ -275,20 +275,22 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 }
             }
         });
+        // 연결 화면 다이얼로그
         makeBleDialog();
         makeE4Dialog();
 
-
+        //우선 끄고 시작
         OffE4();
         OffBLE();
 
+        // 백그라운드 서비스 바인딩
         Intent intent = new Intent(
                 MainActivity.this, // 현재 화면
                 ForegroundService.class); // 다음넘어갈 컴퍼넌트
 
         bindService(intent,serviceConnection, Context.BIND_AUTO_CREATE);
 
-        // 브로드 캐스트 1000ms 씩 가장 최근 것
+        // 브로드 캐스트 1000ms 씩 가장 최근 것 쏘기
         NewRunnable nr = new NewRunnable() ;
         Thread t = new Thread(nr) ;
         t.start() ;
@@ -314,7 +316,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
 
         //메인창을 보이기 위한 애니메이션
-        bgapp.animate().translationY(-1700).setDuration(800).setStartDelay(300);
+        bgapp.animate().translationY(-1400).setDuration(800).setStartDelay(300);
         splashtext.animate().translationY(140).alpha(0).setDuration(800).setStartDelay(300);
         firstmain.startAnimation(frombottom);
     }
@@ -335,82 +337,67 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             Bundle extras= new Bundle();
             extras.putString("USERNAME",user_name);
             extras.putString("DEVICENAME",devicename);
-            boolean state_data [] ={isECGStart, state0,state1};
+            boolean state_data [] ={isECGStart, state0, state1};
             extras.putBooleanArray("STATE",state_data);
 
-            if(isECGStart && state0)
-            {
-                int ecg_count =u_ecg_list.size();
-                if(ecg_count<=0)
-                {
+            if(isECGStart) {
+                int ecg_count = u_ecg_list.size();
+                if (ecg_count <= 0) {
                     int data1[] = {0};
                     extras.putIntArray("ECG", data1);//0:bva 1:eda 2:temp
-                }
-                else
-                {
+                } else {
                     int data1[] = new int[ecg_count];
-                    for (int c =0; c<ecg_count ; c++)
-                    {
-                        data1[c] = (u_ecg_list.get(0)!= null ? u_ecg_list.get(0):0); // Or whatever default you want.
+                    for (int c = 0; c < ecg_count; c++) {
+                        data1[c] = (u_ecg_list.get(0) != null ? u_ecg_list.get(0) : 0); // Or whatever default you want.
                         u_ecg_list.remove(0);
                     }
                     extras.putIntArray("ECG", data1);//0:bva 1:eda 2:temp
                 }
 
-                int accx_count =u_accx_list.size();
-                if(accx_count<=0)
-                {
+                int accx_count = u_accx_list.size();
+                if (accx_count <= 0) {
                     int data1[] = {0};
                     extras.putIntArray("ACCX", data1);//0:bva 1:eda 2:temp
-                }
-                else
-                {
+                } else {
                     int data1[] = new int[accx_count];
-                    for (int c =0; c<accx_count ; c++)
-                    {
-                        data1[c] = (u_accx_list.get(0)!= null ? u_accx_list.get(0):0); // Or whatever default you want.
+                    for (int c = 0; c < accx_count; c++) {
+                        data1[c] = (u_accx_list.get(0) != null ? u_accx_list.get(0) : 0); // Or whatever default you want.
                         u_accx_list.remove(0);
                     }
                     extras.putIntArray("ACCX", data1);//0:bva 1:eda 2:temp
                 }
 
-                int accy_count =u_accy_list.size();
-                if(accy_count<=0)
-                {
+                int accy_count = u_accy_list.size();
+                if (accy_count <= 0) {
                     int data1[] = {0};
                     extras.putIntArray("ACCY", data1);//0:bva 1:eda 2:temp
-                }
-                else
-                {
+                } else {
                     int data1[] = new int[accy_count];
-                    for (int c =0; c<accy_count ; c++)
-                    {
-                        data1[c] = (u_accy_list.get(0)!= null ? u_accy_list.get(0):0); // Or whatever default you want.
+                    for (int c = 0; c < accy_count; c++) {
+                        data1[c] = (u_accy_list.get(0) != null ? u_accy_list.get(0) : 0); // Or whatever default you want.
                         u_accy_list.remove(0);
                     }
                     extras.putIntArray("ACCY", data1);//0:bva 1:eda 2:temp
                 }
 
-                int accz_count =u_accz_list.size();
-                if(accz_count<=0)
-                {
+                int accz_count = u_accz_list.size();
+                if (accz_count <= 0) {
                     int data1[] = {0};
                     extras.putIntArray("ACCZ", data1);//0:bva 1:eda 2:temp
-                }
-                else
-                {
+                } else {
                     int data1[] = new int[accz_count];
-                    for (int c =0; c<accz_count ; c++)
-                    {
-                        data1[c] = (u_accz_list.get(0)!= null ? u_accz_list.get(0):0); // Or whatever default you want.
+                    for (int c = 0; c < accz_count; c++) {
+                        data1[c] = (u_accz_list.get(0) != null ? u_accz_list.get(0) : 0); // Or whatever default you want.
                         u_accz_list.remove(0);
                     }
                     extras.putIntArray("ACCZ", data1);//0:bva 1:eda 2:temp
                 }
+            }
 
 
 
-
+            if(state0)
+            {
                 int bvp_count =u_bvp_list.size();
                 if(bvp_count<=0)
                 {
@@ -663,12 +650,11 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     @Override
                     public void onCharacteristicChanged(byte[] value) {
 
-                        StringBuilder sb = new StringBuilder();
 
                         if(!isECGStart) {
                             isECGStart = true;
                             serviceClass.isECGStart = true;
-                            currentMillis= System.currentTimeMillis();
+                            currentMillis= System.currentTimeMillis();//첫시작의 시간을 저장
                             myToast("ECG PATCH의 연결이 완료되었습니다.");
                             updateLabel(bletitle,"정보요청이 완료되었습니다.");
 
@@ -680,22 +666,16 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                                 //updateLabel(readytext,"센서연결이 완료되었습니다.");
                             }
                         }
-                        if(value.length!=237||!state0||bvp_list.size()==0)
+                        boolean flag = true;
+                        if(value.length!=237||!state0||bvp_list.size()==0)//e4 가 연결되지 않을 때 연결길이 오류날때 시간갱신하기->flag로 바꾸기
                         {
                             currentMillis= System.currentTimeMillis();
-                            return;
+                            flag=false;
+                           // return;
                         }
 
-                        // 현재시간을 msec 으로 구한다.
-                        // 현재시간을 date 변수에 저장한다.
-                        Date date = new Date(currentMillis);
-                        // 시간을 나타냇 포맷을 정한다 ( yyyy/MM/dd 같은 형태로 변형 가능 )
-                        SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        StringBuilder sb = new StringBuilder();
 
-                        // nowDate 변수에 값을 저장한다.
-                        String formatDate = sdfNow.format(date);
-                        serviceClass.time_list.add(formatDate);
-                        currentMillis+=1000;
 
                         int buf = 0;
                         int pre_buf = value[0];
@@ -793,7 +773,23 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             if(c==tempcount-1) sb.append("/");
                             else sb.append(",");
                         }
-                        serviceClass.data_list.add(sb.toString());
+
+                        if(flag)//모두 연결된 정상적인 state 일땐 service class 에 timelist와 datalist에 데이터 더하기
+                        {
+                            // 현재시간을 msec 으로 구한다.
+                            // 현재시간을 date 변수에 저장한다.
+                            Date date = new Date(currentMillis);
+                            // 시간을 나타냇 포맷을 정한다 ( yyyy/MM/dd 같은 형태로 변형 가능 )
+                            SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+                            // nowDate 변수에 값을 저장한다.
+                            String formatDate = sdfNow.format(date);
+                            serviceClass.time_list.add(formatDate);
+                            currentMillis+=1000;
+
+                            serviceClass.data_list.add(sb.toString());
+                        }
+
                     }
                 });
     }
