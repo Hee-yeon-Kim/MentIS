@@ -118,6 +118,7 @@
                     android:id="@+id/profileicon"
                     />
                 <TextView
+                    android:id="@+id/idtext"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
@@ -130,6 +131,32 @@
                     android:gravity="center_vertical"
                     android:textSize="16sp"
                     android:textColor="#FFFF"
+                    android:fontFamily="@font/nanumsquarer"
+                    />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/dbfail"
+                    android:layout_toRightOf="@id/idtext"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignTop="@+id/idtext"
+                    android:id="@+id/dbicon"
+                    />
+                <TextView
+                    android:id="@+id/dbtext"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_toRightOf="@+id/dbicon"
+                    android:layout_alignTop="@+id/idtext"
+
+                    android:text="서버 미작동"
+                    android:textAlignment="center"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="#FFFF"
+                    android:fontFamily="@font/nanumsquarer"
                     />
 
                 <Button
@@ -293,10 +320,11 @@
                         android:gravity="center"
                         android:padding="16dp"
                         android:orientation="vertical">
-                        <ImageView
+                        <Button
+                            android:id="@+id/ecgbutton"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
-                            android:src="@mipmap/ecghearticon"/>
+                            android:background="@mipmap/ecghearticon"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -326,10 +354,11 @@
                         android:gravity="center"
                         android:padding="16dp"
                         android:orientation="vertical">
-                        <ImageView
+                        <Button
+                            android:id="@+id/e4button"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
-                            android:src="@mipmap/e4icon2"/>
+                            android:background="@mipmap/e4icon2"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -359,10 +388,11 @@
                         android:gravity="center"
                         android:padding="16dp"
                         android:orientation="vertical">
-                        <ImageView
+                        <Button
+                            android:id="@+id/stressbutton"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
-                            android:src="@mipmap/charticon"/>
+                            android:background="@mipmap/charticon"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

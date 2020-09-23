@@ -42,6 +42,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,6 +55,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -63,6 +65,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.empatica.empalink.EmpaDeviceManager;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,13 +87,13 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
     ForegroundService serviceClass;
     boolean isService = false;
-
-    ImageView bgapp,img_blue;
+    boolean isECGView = false;
+    ImageView bgapp,img_blue,dbicon;
     Switch ecgswitch, e4switch;
     LinearLayout splashtext, firstmain;
     Animation frombottom;
-    Button goUnity,calli;
-    TextView e4connected;
+    Button goUnity,calli,userSetting,ecgbutton,e4button,stressbutton;
+    TextView e4connected,dbtext,usertext;
     TextView bletitle;
     ListView blelist;
     AlertDialog bleDialog;
@@ -118,11 +122,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     private List<Float> u_temp_list;
     private List<Float> u_eda_list;
 
-    private ArrayList<Integer> u_ecg_list;
-    private  ArrayList<Integer> u_accx_list;
-    private  ArrayList<Integer> u_accy_list;
-    private  ArrayList<Integer> u_accz_list;
-
     private List<Float> bvp_list;
     private List<Float> temp_list;
     private List<Float> eda_list;
@@ -133,6 +132,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     private String devicename="";
     private boolean isECGStart = false;
     private ImageView e4_loading;
+    public static Context context_main; // context 변수 선언
+
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -156,15 +157,11 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context_main = this; // onCreate에서 this 할당
+
         mHandler = new Handler() ;
-        u_bvp_list= new ArrayList<>();
         u_temp_list= new ArrayList<>();
         u_eda_list= new ArrayList<>();
-        u_ecg_list = new ArrayList<>();
-        u_accx_list = new ArrayList<>();
-        u_accy_list = new ArrayList<>();
-        u_accz_list = new ArrayList<>();
-
 
         bvp_list= new ArrayList<>();
         temp_list= new ArrayList<>();
@@ -185,6 +182,39 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 .setOperateTimeout(5000);
 
 
+        userSetting.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+               //로그인 다이얼로그
+                LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LinearLayout loginLayout = (LinearLayout) vi.inflate(R.layout.logindialog, null);
+                final EditText id = (EditText)loginLayout.findViewById(R.id.id);
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("계정 설정")
+                        .setView(loginLayout)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override public void onClick(DialogInterface dialog, int which) {
+
+                                String tmp =  id.getText().toString();
+
+                                if(tmp.length()>6)
+                                {
+                                    Toast.makeText(MainActivity.this, "이름을 다시 설정해주세요", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                user_name = tmp;
+
+                                usertext.setText(user_name+"님");
+                                serviceClass.user_name = user_name;
+                                serviceClass.nameEvent();//name , id 매칭
+
+                            }
+                        }).show();
+
+
+            }
+
+        });
         ecgswitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,11 +259,20 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 startActivity(intent);
             }
         });
+        ecgbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ecgView.class);
+                startActivity(intent);
+            }
+
+        });
         calli.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, callibrationView.class);
                 startActivity(intent);
+                serviceClass.isCalli=true;
             }
         });
 
@@ -307,8 +346,16 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         ecgswitch = (Switch) findViewById(R.id.ecgswitch);
         e4switch = (Switch) findViewById(R.id.e4switch);
         goUnity = (Button) findViewById((R.id.goUnity));
+        ecgbutton = (Button) findViewById((R.id.ecgbutton));
+        e4button = (Button) findViewById((R.id.e4button));
+        stressbutton = (Button) findViewById((R.id.stressbutton));
+
         calli = (Button) findViewById(R.id.calli);
+        userSetting=(Button) findViewById(R.id.goSetting);
         //
+        dbicon = (ImageView) findViewById(R.id.dbicon);
+        dbtext =(TextView) findViewById(R.id.dbtext);
+        usertext = (TextView) findViewById(R.id.idtext);
 
         operatingAnim = AnimationUtils.loadAnimation(this, R.anim.rotate);
         operatingAnim.setInterpolator(new LinearInterpolator());
@@ -332,69 +379,10 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
             // SetAction uses a string which is an important name as it identifies the sender of the itent and that we will give to the receiver to know what to listen.
             // By convention, it's suggested to use the current package name com.MentlsCompany.MentlsTest
-            sendIntent.setAction("com.ims.empalink.sendintent");
+            sendIntent.setAction("com.ims.E4");
 
             Bundle extras= new Bundle();
-            extras.putString("USERNAME",user_name);
-            extras.putString("DEVICENAME",devicename);
-            boolean state_data [] ={isECGStart, state0, state1};
-            extras.putBooleanArray("STATE",state_data);
-
-            if(isECGStart) {
-                int ecg_count = u_ecg_list.size();
-                if (ecg_count <= 0) {
-                    int data1[] = {0};
-                    extras.putIntArray("ECG", data1);//0:bva 1:eda 2:temp
-                } else {
-                    int data1[] = new int[ecg_count];
-                    for (int c = 0; c < ecg_count; c++) {
-                        data1[c] = (u_ecg_list.get(0) != null ? u_ecg_list.get(0) : 0); // Or whatever default you want.
-                        u_ecg_list.remove(0);
-                    }
-                    extras.putIntArray("ECG", data1);//0:bva 1:eda 2:temp
-                }
-
-                int accx_count = u_accx_list.size();
-                if (accx_count <= 0) {
-                    int data1[] = {0};
-                    extras.putIntArray("ACCX", data1);//0:bva 1:eda 2:temp
-                } else {
-                    int data1[] = new int[accx_count];
-                    for (int c = 0; c < accx_count; c++) {
-                        data1[c] = (u_accx_list.get(0) != null ? u_accx_list.get(0) : 0); // Or whatever default you want.
-                        u_accx_list.remove(0);
-                    }
-                    extras.putIntArray("ACCX", data1);//0:bva 1:eda 2:temp
-                }
-
-                int accy_count = u_accy_list.size();
-                if (accy_count <= 0) {
-                    int data1[] = {0};
-                    extras.putIntArray("ACCY", data1);//0:bva 1:eda 2:temp
-                } else {
-                    int data1[] = new int[accy_count];
-                    for (int c = 0; c < accy_count; c++) {
-                        data1[c] = (u_accy_list.get(0) != null ? u_accy_list.get(0) : 0); // Or whatever default you want.
-                        u_accy_list.remove(0);
-                    }
-                    extras.putIntArray("ACCY", data1);//0:bva 1:eda 2:temp
-                }
-
-                int accz_count = u_accz_list.size();
-                if (accz_count <= 0) {
-                    int data1[] = {0};
-                    extras.putIntArray("ACCZ", data1);//0:bva 1:eda 2:temp
-                } else {
-                    int data1[] = new int[accz_count];
-                    for (int c = 0; c < accz_count; c++) {
-                        data1[c] = (u_accz_list.get(0) != null ? u_accz_list.get(0) : 0); // Or whatever default you want.
-                        u_accz_list.remove(0);
-                    }
-                    extras.putIntArray("ACCZ", data1);//0:bva 1:eda 2:temp
-                }
-            }
-
-
+                                        //            extras.putString("USERNAME",user_name);
 
             if(state0)
             {
@@ -460,7 +448,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             // Here we fill the Intent with our data, here just a string with an incremented number in it.
             // sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
             // And here it goes ! our message is send to any other app that want to listen to it.
-            sendBroadcast(sendIntent);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(sendIntent);
             //  Log.d("test",msg);
             // In our case we run this method each second with postDelayed
             // mHandler.removeCallbacks(this);
@@ -489,6 +477,35 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         }
     }
 
+    public void toggleECGView(boolean tmp)
+    {
+        if(tmp) isECGView=true;
+        else isECGView=false;
+    }
+    public void changeDBicon(boolean tmp)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(tmp)
+                {
+                    dbicon.setImageResource(R.mipmap.dbok);
+                    dbtext.setText("서버 작동 중");
+                }
+                else
+                {
+                    dbicon.setImageResource(R.mipmap.dbfail);
+                    dbtext.setText("서버 미작동");
+                }
+            }
+        });
+
+    }
+
+    public void setIsCalli(boolean isCalli)
+    {
+        serviceClass.isCalli= isCalli;
+    }
 
     private void showConnectedDevice() {
         List<BleDevice> deviceList = BleManager.getInstance().getAllConnectedDevice();
@@ -651,6 +668,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     public void onCharacteristicChanged(byte[] value) {
 
 
+                        if(value.length!=237) return;
                         if(!isECGStart) {
                             isECGStart = true;
                             serviceClass.isECGStart = true;
@@ -666,8 +684,9 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                                 //updateLabel(readytext,"센서연결이 완료되었습니다.");
                             }
                         }
+                        //서비스 클래스 전달
                         boolean flag = true;
-                        if(value.length!=237||!state0||bvp_list.size()==0)//e4 가 연결되지 않을 때 연결길이 오류날때 시간갱신하기->flag로 바꾸기
+                        if(!state0||bvp_list.size()==0)//e4 가 연결되지 않을 때 연결길이 오류날때 시간갱신하기->flag로 바꾸기
                         {
                             currentMillis= System.currentTimeMillis();
                             flag=false;
@@ -675,6 +694,14 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                         }
 
                         StringBuilder sb = new StringBuilder();
+
+                        //로컬 브로드캐스트
+                        Intent ecgintent = new Intent("com.ims.ECG");
+
+                        int raw_ecg[] = new int[128];
+                        int raw_accx[] = new int[28];
+                        int raw_accy[] = new int[28];
+                        int raw_accz[] = new int[28];
 
 
                         int buf = 0;
@@ -691,12 +718,13 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             }
                             pre_buf = buf;
                             buf = (int)(buf + level * 255);
-                            u_ecg_list.add(buf);
+                            raw_ecg[c] = buf;
                             sb.append(buf);
                             if(c==127) sb.append("/");
                             else sb.append(",");
                         }
                         int index=0;
+                        int countx=0, county=0, countz=0;
                         for (int c = 0; c < 21; c++)
                         {
                             int acc1 = (value[5 * c + 128]);
@@ -715,26 +743,28 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
                             if(index%3==0)
                             {
-                                u_accx_list.add(acc1);
-                                u_accy_list.add(acc2);
-                                u_accz_list.add(acc3);
-                                u_accx_list.add(acc4);
+                                raw_accx[countx++]=acc1;
+                                raw_accy[county++]=acc2;
+                                raw_accz[countz++]=acc3;
+                                raw_accx[countx++]=acc4;
                                 index+=4;
                             }
                             else if( index%3==1)
                             {
-                                u_accy_list.add(acc1);
-                                u_accz_list.add(acc2);
-                                u_accx_list.add(acc3);
-                                u_accy_list.add(acc4);
+                                raw_accy[county++]=acc1;
+                                raw_accz[countz++]=acc2;
+                                raw_accx[countx++]=acc3;
+                                raw_accy[county++]=acc4;
+
                                 index+=4;
                             }
                             else
                             {
-                                u_accz_list.add(acc1);
-                                u_accx_list.add(acc2);
-                                u_accy_list.add(acc3);
-                                u_accz_list.add(acc4);
+                                raw_accz[countz++]=acc1;
+                                raw_accx[countx++]=acc2;
+                                raw_accy[county++]=acc3;
+                                raw_accz[countz++]=acc4;
+
                                 index+=4;
                             }
 
@@ -749,6 +779,15 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             else sb.append(",");
 
                         }
+                        //ecg 브로드캐스팅
+                        Bundle extras= new Bundle();
+                        extras.putIntArray("ECG",raw_ecg);
+                        extras.putIntArray("ACCX",raw_accx);
+                        extras.putIntArray("ACCY",raw_accy);
+                        extras.putIntArray("ACCZ",raw_accx);
+                        ecgintent.putExtras(extras);
+                        if(isECGView) LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(ecgintent);
+
                         int bvpcount = bvp_list.size();
                         for( int c=0; c<bvpcount ;c++)
                         {

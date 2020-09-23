@@ -3,25 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorGray"
     android:fontFamily="@font/nanumsquareeb"
     >
+
+
     <RelativeLayout
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/box"
         android:elevation="15dp"
+        android:id="@+id/upperbar"
         >
         <Button
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@mipmap/backbtnicon"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="8dp"
             />
         <TextView
@@ -36,7 +38,55 @@
             android:textColor="@color/colorPrimary"
             />
 
+
     </RelativeLayout>
+<!--        <TextView-->
+<!--            android:id="@+id/ecgtest"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="가나다라"-->
+<!--            />-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@id/upperbar"
+
+        >
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+
+       android:orientation="vertical">
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/ECGChart"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_marginTop="20dp"
+        />
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/ACCXChart"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_marginTop="20dp"
+        />
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/ACCYChart"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_marginTop="20dp"
+        />
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/ACCZChart"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_marginTop="20dp"
+        />
+   </LinearLayout>
+    </ScrollView>
 
 
 </android.support.constraint.ConstraintLayout>

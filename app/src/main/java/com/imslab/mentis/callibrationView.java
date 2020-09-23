@@ -1,6 +1,7 @@
 package com.imslab.mentis;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Debug;
@@ -28,12 +29,13 @@ public class callibrationView extends AppCompatActivity {
     private int  ProgressBarStatus;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.callibration);
 
-       CountDown_Tv = findViewById(R.id.countertext);
+        CountDown_Tv = findViewById(R.id.countertext);
 
         ProgressBarStatus=0;
         MyProgressBar = findViewById(R.id.fpb);
@@ -78,6 +80,8 @@ public class callibrationView extends AppCompatActivity {
     }
 
     private void startTimer() {
+        ((MainActivity)MainActivity.context_main).setIsCalli(true);
+
         MyCountDownTimer = new CountDownTimer(START_TIME_IN_MILLIS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -98,6 +102,7 @@ public class callibrationView extends AppCompatActivity {
                 TimerRunning = false;
                 CountDown_Tv.setText("00:00");
                 waveView.pauseAnimation();
+                ((MainActivity)MainActivity.context_main).setIsCalli(false);
 
                 //   MyProgressBar.setProgress(100);
 
@@ -114,16 +119,26 @@ public class callibrationView extends AppCompatActivity {
 
     }
     @Override
+    protected  void onStop()
+    {
+        super.onStop();
+        ((MainActivity)MainActivity.context_main).setIsCalli(false);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         MyProgressBar.setProgress(100);
         ProgressBarStatus=1;
         waveView.resumeAnimation();
+        ((MainActivity)MainActivity.context_main).setIsCalli(true);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        ((MainActivity)MainActivity.context_main).setIsCalli(false);
 
         waveView.pauseAnimation();
     }

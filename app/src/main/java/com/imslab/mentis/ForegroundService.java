@@ -11,6 +11,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -36,7 +38,12 @@ public class ForegroundService extends Service {
     public boolean isECGStart=false;
     public boolean state0=false;
     public  boolean isCalli = false;
+    public boolean openDB = false;
+    public int userID=-1;
     Thread th;
+    Connection con = null;
+
+    Statement st = null;
 
     IBinder mBinder = new MyBinder();
 
@@ -45,6 +52,12 @@ public class ForegroundService extends Service {
             return ForegroundService.this;
         }
     }
+    public ForegroundService getForegroundService()
+    {
+        if(th==null) return null;
+        return ForegroundService.this;
+    }
+
 
 
     @Override
@@ -53,8 +66,8 @@ public class ForegroundService extends Service {
         data_list= new ArrayList<>();
 
         time_list = new ArrayList<>();
-
-
+        isCalli = false;
+        openDB = false;
 
     }
 
@@ -95,16 +108,52 @@ public class ForegroundService extends Service {
         time_list.clear();
         isECGStart=false;
         state0=false;
+        closeDB();
         th.interrupt();
         return true;
     }
+    public  void initialize()
+    {
+        data_list.clear();
+        time_list.clear();
+        openDB = false;
+    }
 
+
+    class NewRunnable2 implements Runnable {
+        @Override
+        public  void run()
+        {
+           if(connectionName())
+           {
+               respondDB(5);
+           }
+        }
+    }
     class NewRunnable implements Runnable {
         @Override
         public void run()
         {
+            initialize();
             while (true)
             {
+                //우선 db 가 연결이 되어있냐?
+                if(!openDB)
+                {
+                    openDB = connectDB();
+                   if(openDB) {
+                       ((MainActivity)MainActivity.context_main).changeDBicon(true);
+                   }
+                   else {
+                       if(time_list.size()>300) // 5분동안 미연결 시 지움
+                       {
+                           initialize();
+                       }
+                       ((MainActivity)MainActivity.context_main).changeDBicon(false);
+                      return;
+                   }
+                }
+
                 int sleeptime = 10000;//10초마다 sleep
 
                 int willsend = time_list.size();//애초에 둘다 연결될때 이 리스트가 채워지니깐
@@ -113,12 +162,7 @@ public class ForegroundService extends Service {
                    // 10초마다 쌓인 거 다 집어넣기
                     addItemToDB();
                 }
-                else
-                {
-                  //  sleeptime = 1000;//1초마다 sleep
-                    data_list.clear();
-                    time_list.clear();
-                }
+
                 try
                 {
                     Thread.sleep(sleeptime);
@@ -129,6 +173,15 @@ public class ForegroundService extends Service {
                 }
             }
         }
+    }
+
+
+    public void nameEvent()
+    {
+        NewRunnable2 nr2 = new NewRunnable2() ;
+        Thread th2 = new Thread(nr2) ;
+        th2.setDaemon(true);//앱이 종료되면 쓰레드 종료-이건 쓰레드 실행되기 전에 설정되어야하니까/
+        th2.start() ;
     }
 
 //    private String makestring()
@@ -192,37 +245,128 @@ public class ForegroundService extends Service {
         for(int i =0; i<sendsize;i++)
         {
             if(!connectionJDBCTest()) {
-                respondDB();
+                ((MainActivity)MainActivity.context_main).changeDBicon(false);
                 return;
             }
 
         }
 
     }
-    void respondDB()
-    {
-        Handler handler = new Handler();
-        handler.post(new Runnable() {
+    // 검색
 
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(),
-                        "데이터 베이스 쓰기가 거부되었습니다.",
-                        Toast.LENGTH_SHORT).show();
+
+
+    void respondDB(int flag)
+    {
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+
+            handler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (flag == 1) {
+
+                        Toast.makeText(getApplicationContext(),
+                                "데이터 베이스-write to user table가 거부 되었습니다",
+                                Toast.LENGTH_SHORT).show();
+                    } else if (flag == 2) {
+                        Toast.makeText(getApplicationContext(),
+                                "데이터 베이스 write to monitoring table 가 거부되었습니다.",
+                                Toast.LENGTH_SHORT).show();
+
+                    } else if (flag == 3) {
+                        Toast.makeText(getApplicationContext(),
+                                "사용자에 할당된 ID가 없습니다.",
+                                Toast.LENGTH_SHORT).show();
+                    }else if(flag==5)
+                    {
+                        Toast.makeText(getApplicationContext(),
+                                "ID 설정이 완료되었습니다.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            });
+
+    }
+    public boolean connectionName() {
+
+        if(!openDB) return false;
+
+        String content = null;
+        StringBuilder towrite= new StringBuilder();
+        towrite.append("insert into user values (");
+        towrite.append("'");
+        towrite.append(user_name);//String
+        towrite.append("'");
+        towrite.append(",,,,)");
+
+        content= "INSERT INTO user (name,sex,age,height,weight) VALUES ('"+user_name+"',1,29,170,60)";
+        try {
+
+            st.executeUpdate(content);
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            respondDB(1);
+
+            return false;//"데이터베이스 쓰기 거부";
+
+        }
+        StringBuilder sb= new StringBuilder();
+
+        String sql = sb.append("select * from " + "user" + " where")
+                .append(" name = ")
+                .append("'")
+                .append(user_name)
+                .append("'")
+                .append(";").toString();
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next()){
+                userID= rs.getInt("user_id");
             }
 
-        });
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            respondDB(3);
+            e.printStackTrace();
+            return  false;
+        }
+        return  true;
+
+    }
+    public Boolean closeDB()
+    {
+
+            if(null != con) {
+
+                try {
+
+                    con.close();
+                    con=null;
+                    st=null;
+
+                } catch (SQLException e) {
+
+                    e.printStackTrace();
+                    return false;// "데이터베이스 종료 거부";
+
+                }
+            }
+            return true;
     }
 
-    public boolean connectionJDBCTest() {
 
-
-        Connection con = null;
-
-        Statement st = null;
-
-        String content = "";
-
+    public boolean connectDB()
+    {
         try {
 
             Class.forName("org.mariadb.jdbc.Driver");
@@ -240,38 +384,49 @@ public class ForegroundService extends Service {
 
         try {
 
-
             con = DriverManager.getConnection("jdbc:mariadb://192.168.0.15:3306/iot_stress", "root", "imslab!@#");
+            st = con.createStatement();
 
-            StringBuilder towrite= new StringBuilder();
-            towrite.append("insert into monitoring values (");
-            towrite.append(user_name);//id string으로 바꿔달라하기
-            towrite.append(",'");
-            towrite.append(time_list.get(0));
-            time_list.remove(0);
-            towrite.append("','");
-            towrite.append(data_list.get(0));
-            data_list.remove(0);
-            towrite.append("',");
-            if(isCalli) towrite.append("1)");
-            else towrite.append("0)");
-
-
-            content = towrite.toString();//"insert into monitoring values (1,'2020/09/20 05:20:01','123456',1)";
         } catch (SQLException e) {
             e.printStackTrace();
             return false;//"데이터베이스 연동이 되지 않습니다.(errorcode:1)";
         }
+        return  true;
+    }
+
+
+    public boolean connectionJDBCTest() {
+
+        String content = "";
+
+        StringBuilder towrite= new StringBuilder();
+        towrite.append("insert into monitoring values (");
+        towrite.append(userID);//id
+        towrite.append(",'");
+        towrite.append(time_list.get(0));//String
+        time_list.remove(0);
+        towrite.append("','");
+        towrite.append(data_list.get(0));
+        data_list.remove(0);
+        towrite.append("',");
+        if(isCalli) towrite.append("1)");
+        else towrite.append("0)");
+
+
+        content = towrite.toString();//"insert into monitoring values (1,'2020/09/20 05:20:01','123456',1)";
 
         try {
 
-            st = con.createStatement();
             st.executeUpdate(content);
 
             } catch (SQLException e) {
-
+//한번 에러나면 끊고 다시 들어가도록
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                openDB = false;
+                closeDB();
+                ((MainActivity)MainActivity.context_main).changeDBicon(false);
+                respondDB(2);
                 return false;//"데이터베이스 쓰기 거부";
 
             }
@@ -307,22 +462,22 @@ public class ForegroundService extends Service {
 
 
 
-        finally {
-
-            if(null != con) {
-
-                try {
-
-                    con.close();
-
-                } catch (SQLException e) {
-
-                    e.printStackTrace();
-                    return false;// "데이터베이스 종료 거부";
-
-                }
-            }
-        }
+//        finally {
+//
+//            if(null != con) {
+//
+//                try {
+//
+//                    con.close();
+//
+//                } catch (SQLException e) {
+//
+//                    e.printStackTrace();
+//                    return false;// "데이터베이스 종료 거부";
+//
+//                }
+//            }
+//        }
         return true;
 
     }

@@ -30,6 +30,8 @@
         </activity>
         <activity android:name=".MiddleActivity"></activity>
         <activity android:name=".callibrationView"></activity>
+        <activity android:name=".ecgView"></activity>
+
         <activity
             android:name="com.unity3d.player.UnityPlayerActivity"
             android:process="com.unity3d.player.UnityPlayerActivity" />
