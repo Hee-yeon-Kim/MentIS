@@ -27,6 +27,10 @@ public class ecgView extends AppCompatActivity {
     private LineChart chartE,chartX,chartY,chartZ;
     boolean isListening=false;
     private  ArrayList<Integer> ecglist;
+    private  ArrayList<Integer> accXlist;
+    private  ArrayList<Integer> accYlist;
+    private  ArrayList<Integer> accZlist;
+
     int lastecg=0;
     Thread t;
     @Override
@@ -37,18 +41,23 @@ public class ecgView extends AppCompatActivity {
         filter.addAction("com.ims.ECG");
         ((MainActivity)MainActivity.context_main).toggleECGView(true);
         ecglist = new ArrayList<>();
+        accXlist = new ArrayList<>();
+        accYlist = new ArrayList<>();
+        accZlist= new ArrayList<>();
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Bundle extras = intent.getExtras();
-                StringBuilder s = new StringBuilder();
-                if(extras!=null)
+                 if(extras!=null)
                 {
                     int[] temp_ecg= extras.getIntArray("ECG");
+                    int[] temp_accx= extras.getIntArray("ACCX");
+                    int[] temp_accy= extras.getIntArray("ACCY");
+                    int[] temp_accz= extras.getIntArray("ACCZ");
+
                     if(temp_ecg!=null)
                     {
-                        s.append("옴");
-                        isListening = true;
+                         isListening = true;
                         for(int i=0; i<temp_ecg.length;i++)
                         {
 
@@ -57,15 +66,56 @@ public class ecgView extends AppCompatActivity {
                             }
                             catch (NullPointerException e)
                             {
-                                s.append("nullpointecg");
+                                e.getStackTrace();
                             }
                         }
 
                     }
+                    if(temp_accx!=null)
+                    {
+                        for(int i=0; i<temp_accx.length;i++)
+                        {
 
+                            try {
+                                accXlist.add(temp_accx[i]);
+                            }
+                            catch (NullPointerException e)
+                            {
+                                e.getStackTrace();
+                            }
+                        }
+
+                    }
+                    if(temp_accy!=null)
+                    {
+                        for(int i=0; i<temp_accy.length;i++)
+                        {
+
+                            try {
+                                accYlist.add(temp_accy[i]);
+                            }
+                            catch (NullPointerException e)
+                            {
+                                e.getStackTrace();
+                            }
+                        }
+
+                    }
+                    if(temp_accz!=null)
+                    {
+                        for(int i=0; i<temp_accz.length;i++)
+                        {
+
+                            try {
+                                accZlist.add(temp_accz[i]);
+                            }
+                            catch (NullPointerException e)
+                            {
+                                e.getStackTrace();
+                            }
+                        }
+                    }
                 }
-
-
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,filter);
@@ -92,8 +142,8 @@ public class ecgView extends AppCompatActivity {
             while(true) {
                 if(isListening&&atstart)//연결된 상태에서 그래프 딱 그리기 시점
                 {
-                    try {//약간 딜레이주기
-                        Thread.sleep(1000);
+                    try {//2초 딜레이주기
+                        Thread.sleep(2000);
                         atstart = false;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -135,7 +185,7 @@ public class ecgView extends AppCompatActivity {
     {
 
         chart.setDrawGridBackground(true);
-        chart.setBackgroundColor(Color.WHITE);
+       // chart.setBackgroundColor(Color.WHITE);
         chart.setGridBackgroundColor(Color.WHITE);
 
 // description text
@@ -143,8 +193,8 @@ public class ecgView extends AppCompatActivity {
         Description des = chart.getDescription();//raw_Chart.getDescription();
         des.setEnabled(true);
         des.setText("ECG");
-        des.setTextSize(12f);
-        des.setTextColor(getColor(R.color.colorPrimary));
+        des.setTextSize(13f);
+        des.setTextColor(getColor(R.color.ecgcolor));
 
 // touch gestures (false-비활성화)
         chart.setTouchEnabled(false);
@@ -168,10 +218,10 @@ public class ecgView extends AppCompatActivity {
 
 //Legend
         Legend l = chart.getLegend();
-        l.setEnabled(true);
-        l.setFormSize(10f); // set the size of the legend forms/shapes
-        l.setTextSize(12f);
-        l.setTextColor(Color.WHITE);
+        l.setEnabled(false);
+//        l.setFormSize(10f); // set the size of the legend forms/shapes
+//        l.setTextSize(12f);
+//        l.setTextColor(Color.WHITE);
 
 //Y축
         YAxis leftAxis = chart.getAxisLeft();
@@ -179,7 +229,8 @@ public class ecgView extends AppCompatActivity {
         leftAxis.setTextColor(Color.DKGRAY);
         leftAxis.setDrawGridLines(true);
         leftAxis.setGridColor(Color.DKGRAY);
-
+       // leftAxis.setGranularity(100);
+        leftAxis.setLabelCount(6,true);
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.setEnabled(false);
 
@@ -213,7 +264,7 @@ public class ecgView extends AppCompatActivity {
         // let the chart know it's data has changed
         chartE.notifyDataSetChanged();
 
-        chartE.setVisibleXRangeMaximum(512);
+        chartE.setVisibleXRangeMaximum(512);//4초동안
         // this automatically refreshes the chart (calls invalidate())
         chartE.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
 
@@ -223,11 +274,11 @@ public class ecgView extends AppCompatActivity {
 
 
 
-        LineDataSet set = new LineDataSet(null, "Real-time Line Data");
+        LineDataSet set = new LineDataSet(null, "ECG Data");
         set.setLineWidth(1f);
         set.setDrawValues(false);
-        set.setValueTextColor(getColor(R.color.colorPrimary));
-        set.setColor(getColor(R.color.colorPrimary));
+        set.setValueTextColor(getColor(R.color.ecgcolor));
+        set.setColor(getColor(R.color.ecgcolor));
         set.setMode(LineDataSet.Mode.LINEAR);
         set.setDrawCircles(false);
         set.setHighLightColor(Color.rgb(190, 190, 190));

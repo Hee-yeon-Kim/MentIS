@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -33,6 +34,7 @@ public class ForegroundService extends Service {
 
     public  List<String> time_list;
     public  List<String> data_list;
+
 
     public String user_name="no_name";
     public boolean isECGStart=false;
@@ -64,7 +66,6 @@ public class ForegroundService extends Service {
     public void onCreate() {
         super.onCreate();
         data_list= new ArrayList<>();
-
         time_list = new ArrayList<>();
         isCalli = false;
         openDB = false;
@@ -90,6 +91,8 @@ public class ForegroundService extends Service {
 
         //do heavy work on a background thread
 
+        initialize();
+
         NewRunnable nr = new NewRunnable() ;
         th = new Thread(nr) ;
         th.setDaemon(true);//앱이 종료되면 쓰레드 종료-이건 쓰레드 실행되기 전에 설정되어야하니까/
@@ -114,12 +117,34 @@ public class ForegroundService extends Service {
     }
     public  void initialize()
     {
-        data_list.clear();
-        time_list.clear();
-        openDB = false;
+        try {
+            data_list.clear();
+            time_list.clear();
+
+            isCalli = false;
+            openDB = false;
+
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    //id에 맞는 분석된 정보 받아오는 쓰레드 - 이벤트 속성 - 설정할 때만 동작
+    class NewRunnable3 implements Runnable {
+        @Override
+        public  void run()
+        {
+            if(!getData())
+            {
+                respondDB(6);
+            }
+
+        }
     }
 
-
+//이름 설정 및 ID찾기 쓰레드 - 이벤트 속성 - 설정할 때만 동작
     class NewRunnable2 implements Runnable {
         @Override
         public  void run()
@@ -130,11 +155,12 @@ public class ForegroundService extends Service {
            }
         }
     }
+
+    //데이터 보내는 쓰레드 계속 동작함
     class NewRunnable implements Runnable {
         @Override
         public void run()
         {
-            initialize();
             while (true)
             {
                 //우선 db 가 연결이 되어있냐?
@@ -183,60 +209,14 @@ public class ForegroundService extends Service {
         th2.setDaemon(true);//앱이 종료되면 쓰레드 종료-이건 쓰레드 실행되기 전에 설정되어야하니까/
         th2.start() ;
     }
+    public void dataEvent()
+    {
+        NewRunnable3 nr3 = new NewRunnable3() ;
+        Thread th3 = new Thread(nr3) ;
+        th3.setDaemon(true);
+        th3.start() ;
+    }
 
-//    private String makestring()
-//    {
-//        int bvpCount = bvp_list.size()/6;
-//        int edaCount = eda_list.size()/6;
-//        int tempCount =temp_list.size()/6;
-//
-//        StringBuilder tmp1= new StringBuilder();
-//        for(int i=0;i<212; i++)
-//        {
-//            if(ecg_list.get(0)!=null)
-//            {
-//
-//                tmp1.append( Integer.toString(ecg_list.get(0)));
-//
-//            }
-//            ecg_list.remove(0);
-//            if(i==127||i==211) tmp1.append("/");
-//            else tmp1.append(",");
-//        }
-//
-//        for(int i=0;i<bvpCount; i++)
-//        {
-//            if(bvp_list.get(0)!=null)
-//            {
-//                tmp1.append(Float.toString(bvp_list.get(0)));
-//            }
-//            bvp_list.remove(0);
-//            if(i==bvpCount-1) tmp1.append("/");
-//            else tmp1.append(",");
-//        }
-//        for(int i=0;i<edaCount; i++)
-//        {
-//            if(eda_list.get(0)!=null)
-//            {
-//                tmp1.append(Float.toString(eda_list.get(0)));
-//            }
-//
-//            eda_list.remove(0);
-//            if(i==edaCount-1) tmp1.append("/");
-//            else tmp1.append(",");
-//        }
-//        for(int i=0;i<tempCount; i++)
-//        {
-//            if(temp_list.get(0)!=null)
-//            {
-//                tmp1.append(Float.toString(temp_list.get(0)));
-//            }
-//            temp_list.remove(0);
-//            if(i==tempCount-1) tmp1.append("/");
-//            else tmp1.append(",");
-//        }
-//        return tmp1.toString();
-//    }
     private void   addItemToDB() {
         int sendsize = time_list.size();//가변적인 리스트는 항상 특정 타겟시기에 갯수 int로 따로 담아서 하기
 
@@ -285,6 +265,11 @@ public class ForegroundService extends Service {
                         Toast.makeText(getApplicationContext(),
                                 "ID 설정이 완료되었습니다.",
                                 Toast.LENGTH_SHORT).show();
+                    }else if(flag==6)
+                    {
+                        Toast.makeText(getApplicationContext(),
+                                "데이터를 받아오는 데 실패하였습니다.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -317,31 +302,89 @@ public class ForegroundService extends Service {
 
             return false;//"데이터베이스 쓰기 거부";
 
+        }finally {
+            StringBuilder sb= new StringBuilder();
+
+            String sql = sb.append("SELECT * FROM " + "user" + " WHERE")
+                    .append(" name = ")
+                    .append("'")
+                    .append(user_name)
+                    .append("'")
+                    .append(";").toString();
+            try {
+                ResultSet rs = st.executeQuery(sql);
+                while(rs.next()){
+                    userID= rs.getInt("user_id");
+                }
+
+
+
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                respondDB(3);
+                e.printStackTrace();
+                return  false;
+            }
+            return  true;
+
         }
+
+    }
+    public Boolean getData()
+    {
         StringBuilder sb= new StringBuilder();
 
-        String sql = sb.append("select * from " + "user" + " where")
-                .append(" name = ")
-                .append("'")
-                .append(user_name)
-                .append("'")
+        String sql = sb.append("SELECT * FROM " + "user_analysis" + " WHERE")
+                .append(" user_id = ")
+                .append(userID)
                 .append(";").toString();
+
+        ArrayList<Integer> ecg_sqa_list=new ArrayList<>();
+        ArrayList<Integer> ppg_sqa_list=new ArrayList<>();
+        ArrayList<Integer> HRmean_list=new ArrayList<>();
+        ArrayList<Integer> STmean_list=new ArrayList<>();
+        ArrayList<Integer> RESP_list=new ArrayList<>();
+        ArrayList<Integer> Stress_list=new ArrayList<>();
+        ArrayList<String> DateTime_list=new ArrayList<>();
+
+
         try {
             ResultSet rs = st.executeQuery(sql);
             while(rs.next()){
-                userID= rs.getInt("user_id");
+                String datetime = rs.getString("time");
+                DateTime_list.add(datetime);
+                Integer ecg_sqa = rs.getInt("ECG_SQA");
+                ecg_sqa_list.add(ecg_sqa);
+                Integer ppg_sqa = rs.getInt("PPG_SQA");
+                ppg_sqa_list.add(ppg_sqa);
+                Integer hrmean = rs.getInt("HRmean");
+                HRmean_list.add(hrmean);
+                Integer stmean = rs.getInt("STmean");
+                STmean_list.add(stmean);
+                Integer resp = rs.getInt("RESP");
+                RESP_list.add(resp);
+                Integer stress = rs.getInt("Stress");
+                Stress_list.add(stress);
             }
-
-
-
         } catch (SQLException e) {
             // TODO Auto-generated catch block
-            respondDB(3);
             e.printStackTrace();
             return  false;
         }
-        return  true;
+        finally {
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("TIME",DateTime_list);
+            bundle.putIntegerArrayList("ECG_SQA",ecg_sqa_list);
+            bundle.putIntegerArrayList("PPG_SQA",ppg_sqa_list);
+            bundle.putIntegerArrayList("HRmean",HRmean_list);
+            bundle.putIntegerArrayList("STmean",STmean_list);
+            bundle.putIntegerArrayList("RESP",RESP_list);
+            bundle.putIntegerArrayList("Stress",Stress_list);
 
+            ((MainActivity)MainActivity.context_main).startStressView(bundle);
+
+        }
+        return  true;
     }
     public Boolean closeDB()
     {

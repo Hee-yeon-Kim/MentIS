@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             // 서비스 객체를 전역변수로 저장
             MyBinder mb = (MyBinder) iBinder;
             serviceClass = mb.getService(); // 서비스가 제공하는 메소드 호출하여 서비스쪽 객체를 전달받을수 있다.
+
             isService = true;
 
         }
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         context_main = this; // onCreate에서 this 할당
 
         mHandler = new Handler() ;
+        u_bvp_list= new ArrayList<>();
         u_temp_list= new ArrayList<>();
         u_eda_list= new ArrayList<>();
 
@@ -168,7 +170,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         eda_list= new ArrayList<>();
 
         UImanager();
-
 
         final IntentFilter intentFilter = new IntentFilter();
 
@@ -180,7 +181,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 .setReConnectCount(1, 5000)
                 .setConnectOverTime(20000)
                 .setOperateTimeout(5000);
-
 
         userSetting.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -275,6 +275,15 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 serviceClass.isCalli=true;
             }
         });
+        stressbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog.setMessage("데이터 로딩 중...");
+                progressDialog.show();
+                serviceClass.dataEvent();//데이터 받아오는 이벤트 실행 - ForeGround 서비스에서 동작-그 후 서비스에서 액티비티 실행시킴
+
+            }
+        });
 
         mDeviceAdapter = new DeviceAdapter(this);
         mDeviceAdapter.setOnDeviceClickListener(new DeviceAdapter.OnDeviceClickListener() {
@@ -328,6 +337,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 ForegroundService.class); // 다음넘어갈 컴퍼넌트
 
         bindService(intent,serviceConnection, Context.BIND_AUTO_CREATE);
+
 
         // 브로드 캐스트 1000ms 씩 가장 최근 것 쏘기
         NewRunnable nr = new NewRunnable() ;
@@ -475,6 +485,38 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 }
             }
         }
+    }
+
+    //stress view 액티비티 트리거 리시버 form ForegroundService
+    public  void startStressView(Bundle bundle)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+                Intent intent = new Intent(getApplicationContext(), stressView.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+    }
+    //캘리브레이션 리시버
+    public void setInit(boolean tmp)
+    {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(tmp)
+                {
+                    calli.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    calli.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     public void toggleECGView(boolean tmp)
@@ -674,8 +716,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             serviceClass.isECGStart = true;
                             currentMillis= System.currentTimeMillis();//첫시작의 시간을 저장
                             myToast("ECG PATCH의 연결이 완료되었습니다.");
-                            updateLabel(bletitle,"정보요청이 완료되었습니다.");
-
+                            updateLabel(bletitle,"연결할 ECG Patch를 선택해주세요");
+                            setIsCalli(true);
                             bleDialog.dismiss();
                             progressDialog.dismiss();
                             mybleDevice = bleDevice;
@@ -793,25 +835,25 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                         {
                             sb.append(bvp_list.get(0));
                             bvp_list.remove(0);
-                            if(c==bvpcount-1) sb.append("/");
-                            else sb.append(",");
+                            if(c!=bvpcount-1) sb.append(",");
                         }
+                        sb.append("/");
                         int edacount = eda_list.size();
                         for( int c=0; c<edacount;c++)
                         {
                             sb.append(eda_list.get(0));
                             eda_list.remove(0);
-                            if(c==edacount-1) sb.append("/");
-                            else sb.append(",");
+                            if(c!=edacount-1)sb.append(",");
                         }
+                        sb.append("/");
                         int tempcount = temp_list.size();
                         for( int c=0; c<tempcount;c++)
                         {
                             sb.append(temp_list.get(0));
                             temp_list.remove(0);
-                            if(c==tempcount-1) sb.append("/");
-                            else sb.append(",");
+                            if(c!=tempcount-1) sb.append(",");
                         }
+                        sb.append("/");
 
                         if(flag)//모두 연결된 정상적인 state 일땐 service class 에 timelist와 datalist에 데이터 더하기
                         {

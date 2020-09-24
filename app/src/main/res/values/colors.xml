@@ -11,6 +11,12 @@
     <color name="mygray">#444444</color>
     <color name="panel1">#FFFFFF</color>
     <color name="panel2">#FEDEA8</color>
+    <color name="ecgcolor">#FF5E3F</color>
+    <color name="accxcolor">#F44336</color>
+    <color name="accycolor">#4CAF50</color>
+    <color name="acczcolor">#0057FF</color>
+
+
 
 
 </resources>

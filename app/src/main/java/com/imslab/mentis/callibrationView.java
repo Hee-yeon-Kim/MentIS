@@ -91,7 +91,7 @@ public class callibrationView extends AppCompatActivity {
 
 
                 /*for incrementing progressbar every second calculating progress for every second*/
-                ProgressBarStatus=  (int)((1-  TimeLeftInMillis/START_TIME_IN_MILLIS)*100);
+                ProgressBarStatus=  (int)((1f-  (float)TimeLeftInMillis/(float)START_TIME_IN_MILLIS)*100);
                 //incrementing progress on every tick
                 MyProgressBar.setProgress(ProgressBarStatus);
 
@@ -103,6 +103,8 @@ public class callibrationView extends AppCompatActivity {
                 CountDown_Tv.setText("00:00");
                 waveView.pauseAnimation();
                 ((MainActivity)MainActivity.context_main).setIsCalli(false);
+                ((MainActivity)MainActivity.context_main).setInit(false);
+                finish();
 
                 //   MyProgressBar.setProgress(100);
 
@@ -125,23 +127,23 @@ public class callibrationView extends AppCompatActivity {
         ((MainActivity)MainActivity.context_main).setIsCalli(false);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MyProgressBar.setProgress(100);
-        ProgressBarStatus=1;
-        waveView.resumeAnimation();
-        ((MainActivity)MainActivity.context_main).setIsCalli(true);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ((MainActivity)MainActivity.context_main).setIsCalli(false);
-
-        waveView.pauseAnimation();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        MyProgressBar.setProgress(100);
+//        ProgressBarStatus=1;
+//        waveView.resumeAnimation();
+//        ((MainActivity)MainActivity.context_main).setIsCalli(true);
+//
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        ((MainActivity)MainActivity.context_main).setIsCalli(false);
+//
+//        waveView.pauseAnimation();
+//    }
 
 
     private void pauseTimer() {
