@@ -24,6 +24,8 @@
             android:layout_centerHorizontal="true"
             android:indeterminate="false"
             android:progress="100"
+            android:layout_marginTop="30dp"
+
             android:progressDrawable="@drawable/circular_progress_background" />
 
         <ProgressBar
@@ -35,6 +37,7 @@
             android:layout_centerHorizontal="true"
             android:indeterminate="false"
             android:progress="20"
+            android:layout_marginTop="30dp"
             android:progressDrawable="@drawable/circular_progress_foreground" />
         <TextView
             android:id="@+id/countertext"
@@ -42,8 +45,17 @@
             android:layout_height="120dp"
             android:gravity="center"
             android:text="05:00"
-            />
+            android:layout_marginTop="30dp"
 
+            />
+        <TextView
+            android:layout_below="@+id/fpb"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:text="Calibrating..."
+            android:textSize="18sp"
+            />
 
 
     </RelativeLayout>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorGray"
+    android:fontFamily="@font/nanumsquareeb"
+    >
+
+    <RelativeLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box"
+        android:elevation="15dp"
+        android:id="@+id/upperbar"
+        >
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/backbutton"
+            android:background="@mipmap/backbtnicon"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="8dp"
+            android:gravity="center_vertical"
+            />
+        <TextView
+            android:id="@+id/graph_title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Alarm Setting"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:fontFamily="@font/nanumsquareeb"
+            android:textColor="@color/colorPrimary"
+            />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/introalalrm"
+        app:layout_constraintTop_toBottomOf="@id/upperbar"
+
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:text="Please set the time to finish the measurement."
+        android:layout_marginTop="30dp"
+        android:textSize="16sp"
+        />
+
+
+    <TimePicker
+        app:layout_constraintTop_toBottomOf="@id/introalalrm"
+        android:layout_marginTop="20dp"
+        android:id="@+id/tp_timepicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:onClick="regist"
+        android:text="Register"
+        app:layout_constraintBaseline_toBaselineOf="@+id/button2"
+        app:layout_constraintEnd_toStartOf="@+id/button2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tp_timepicker" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:onClick="unregist"
+        android:text="Reset"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/tp_timepicker" />
+
+</android.support.constraint.ConstraintLayout>

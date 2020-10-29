@@ -32,5 +32,7 @@
     <string name="setting">Go to settings</string>
     <string name="cancel">Cancel</string>
     <string name="please_open_blue">Please turn on Bluetooth first</string>
+    <string name="e4monitortitile">E4 Band 모니터</string>
+    <string name="selfreporttiitle">자가 진단하기</string>
 
 </resources>

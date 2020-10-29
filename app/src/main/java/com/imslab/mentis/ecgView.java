@@ -1,15 +1,20 @@
 package com.imslab.mentis;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -22,166 +27,132 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
 
-public class ecgView extends AppCompatActivity {
-    private BroadcastReceiver broadcastReceiver;
+public class ecgView extends Fragment {
+
     private LineChart chartE,chartX,chartY,chartZ;
-    boolean isListening=false;
-    private  ArrayList<Integer> ecglist;
-    private  ArrayList<Integer> accXlist;
-    private  ArrayList<Integer> accYlist;
-    private  ArrayList<Integer> accZlist;
+    public Handler ecgGraphHandler;
 
-    int lastecg=0;
-    Thread t;
+     Thread drawgraphThread;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ecgview);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.ims.ECG");
-        ((MainActivity)MainActivity.context_main).toggleECGView(true);
-        ecglist = new ArrayList<>();
-        accXlist = new ArrayList<>();
-        accYlist = new ArrayList<>();
-        accZlist= new ArrayList<>();
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle extras = intent.getExtras();
-                 if(extras!=null)
-                {
-                    int[] temp_ecg= extras.getIntArray("ECG");
-                    int[] temp_accx= extras.getIntArray("ACCX");
-                    int[] temp_accy= extras.getIntArray("ACCY");
-                    int[] temp_accz= extras.getIntArray("ACCZ");
-
-                    if(temp_ecg!=null)
-                    {
-                         isListening = true;
-                        for(int i=0; i<temp_ecg.length;i++)
-                        {
-
-                            try {
-                                ecglist.add(temp_ecg[i]);
-                            }
-                            catch (NullPointerException e)
-                            {
-                                e.getStackTrace();
-                            }
-                        }
-
-                    }
-                    if(temp_accx!=null)
-                    {
-                        for(int i=0; i<temp_accx.length;i++)
-                        {
-
-                            try {
-                                accXlist.add(temp_accx[i]);
-                            }
-                            catch (NullPointerException e)
-                            {
-                                e.getStackTrace();
-                            }
-                        }
-
-                    }
-                    if(temp_accy!=null)
-                    {
-                        for(int i=0; i<temp_accy.length;i++)
-                        {
-
-                            try {
-                                accYlist.add(temp_accy[i]);
-                            }
-                            catch (NullPointerException e)
-                            {
-                                e.getStackTrace();
-                            }
-                        }
-
-                    }
-                    if(temp_accz!=null)
-                    {
-                        for(int i=0; i<temp_accz.length;i++)
-                        {
-
-                            try {
-                                accZlist.add(temp_accz[i]);
-                            }
-                            catch (NullPointerException e)
-                            {
-                                e.getStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,filter);
-        chartE = (LineChart ) findViewById(R.id.ECGChart);
-        SettingChart(chartE);
-        chartX = (LineChart) findViewById(R.id.ACCXChart);
-        chartY= (LineChart) findViewById(R.id.ACCYChart);
-        chartZ = (LineChart) findViewById(R.id.ACCZChart);
-
-        NewRunnable nr = new NewRunnable() ;
-        t = new Thread(nr) ;
-        t.setDaemon(true);
-        t.start() ;
-
+        View view =inflater.inflate(R.layout.ecgview, container, false);
+        
+        drawgraphThread = new drawGraphThread();
+        drawgraphThread.setDaemon(true);
+        drawgraphThread.start() ;
+        return view;
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        chartE = (LineChart ) view.findViewById(R.id.ECGChart);
+        SettingChart(chartE,1);
+        chartX = (LineChart) view.findViewById(R.id.ACCXChart);
+        SettingChart(chartX,2);
+        chartY= (LineChart) view.findViewById(R.id.ACCYChart);
+        SettingChart(chartY,3);
+        chartZ = (LineChart) view.findViewById(R.id.ACCZChart);
+        SettingChart(chartZ,4);
 
     }
-    class NewRunnable implements Runnable {
+
+
+    class drawGraphThread extends Thread {
+        ArrayList<Float> ecglist = new ArrayList<>();
+        ArrayList<Integer> accXlist = new ArrayList<>();
+        ArrayList<Integer> accYlist = new ArrayList<>();
+        ArrayList<Integer> accZlist= new ArrayList<>();
+        long ecgduration =(long)1000/(long)128;
+        long accduration = (long)128/(long)28;
+        long acccount=0;
+        
         @Override
         public void run()
         {
-            long tmp =(long)1000/(long)128;
-            boolean atstart = true;
 
-            while(true) {
-                if(isListening&&atstart)//연결된 상태에서 그래프 딱 그리기 시점
-                {
-                    try {//2초 딜레이주기
-                        Thread.sleep(2000);
-                        atstart = false;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else if(!atstart)// 그 후에는 쭉 잘가기
-                {
-                    runOnUiThread(new Runnable() {
+           //try{ Thread.sleep(1000);} catch (Exception e ){e.printStackTrace();}//1초지연
 
-                        @Override
-                        public void run() {
 
-                            if (ecglist.size() != 0) {
-                                lastecg = ecglist.get(0);
-                                addEntry(lastecg);
-                                ecglist.remove(0);
-                            } else {
-                                //addEntry(lastecg);
+            Looper.prepare();
+            ecgGraphHandler = new Handler(Looper.myLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                try {
+                        Bundle extras = msg.getData();
+                        float[] temp_ecg = extras.getFloatArray("ECG");
+                        int[] temp_accx = extras.getIntArray("ACCX");
+                        int[] temp_accy = extras.getIntArray("ACCY");
+                        int[] temp_accz = extras.getIntArray("ACCZ");
+                        if (temp_ecg != null) {
+                            for (int i = 0; i < temp_ecg.length; i++) {
+                                ecglist.add(temp_ecg[i]);
                             }
 
                         }
+                        if (temp_accx != null) {
+                            for (int i = 0; i < temp_accx.length; i++) {
+                                accXlist.add(temp_accx[i]);
+                            }
+                        }
+                        if (temp_accy != null) {
+                            for (int i = 0; i < temp_accy.length; i++) {
+                                accYlist.add(temp_accy[i]);
+                            }
+                        }
+                        if (temp_accz != null) {
+                            for (int i = 0; i < temp_accz.length; i++) {
+                                accZlist.add(temp_accz[i]);
+                            }
+                        }
+                        //ecg 그리기
+                        if (getActivity() != null) {
+                            for (int i = 0; i < 128; i++) {
+                                try {
+                                    if (ecglist.size() > 0) {
+                                        addEntry(ecglist.get(0));
+                                        ecglist.remove(0);
+                                    }
+                                    if (acccount > accduration) {
+                                        if (accXlist.size() > 0) {
+                                            int accx = accXlist.get(0);
+                                            int accy = accYlist.get(0);
+                                            int accz = accZlist.get(0);
 
-                    });
-                }
+                                            addEntryAcc(accx, accy, accz);
+                                            accXlist.remove(0);
+                                            accYlist.remove(0);
+                                            accZlist.remove(0);
+                                            acccount = 0;
+                                        }
+                                    }
+                                    else {
+                                        acccount += ecgduration;
+                                    }
 
-                try {
-                     Thread.sleep(tmp);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                                    Thread.sleep(ecgduration);
+                                }catch (Exception e)
+                                {
+                                    e.printStackTrace();
+                                }
 
-                }
-            }
+                            }
+                        }//add to graph
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }//Handler handle message method
 
-        }
-    }
+            };//define Handler
+            Looper.loop();
+        }//run method
+    }//Thread class
 
 
-    public void SettingChart(LineChart chart)
+
+
+    public void SettingChart(LineChart chart,int flag)
     {
 
         chart.setDrawGridBackground(true);
@@ -192,9 +163,33 @@ public class ecgView extends AppCompatActivity {
 //        chart.getDescription().setEnabled(true);
         Description des = chart.getDescription();//raw_Chart.getDescription();
         des.setEnabled(true);
-        des.setText("ECG");
         des.setTextSize(13f);
-        des.setTextColor(getColor(R.color.ecgcolor));
+
+        if(getActivity()==null)
+        {
+            return;
+        }
+        switch (flag)
+        {
+            case 1://ECG
+                des.setText("ECG");
+                des.setTextColor(getActivity().getColor(R.color.ecgcolor));
+                break;
+            case 2: // ACCX
+                des.setText("ACCX");
+                des.setTextColor(getActivity().getColor(R.color.accxcolor));
+                break;
+            case 3: // ACCY
+                des.setText("ACCY");
+                des.setTextColor(getActivity().getColor(R.color.accycolor));
+                break;
+            case 4: // ACCZ
+                des.setText("ACCZ");
+                des.setTextColor(getActivity().getColor(R.color.acczcolor));
+                break;
+
+        }
+
 
 // touch gestures (false-비활성화)
         chart.setTouchEnabled(false);
@@ -229,7 +224,7 @@ public class ecgView extends AppCompatActivity {
         leftAxis.setTextColor(Color.DKGRAY);
         leftAxis.setDrawGridLines(true);
         leftAxis.setGridColor(Color.DKGRAY);
-       // leftAxis.setGranularity(100);
+       // leftAxis (100);
         leftAxis.setLabelCount(6,true);
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.setEnabled(false);
@@ -239,46 +234,154 @@ public class ecgView extends AppCompatActivity {
         chart.invalidate();
     }
 
-    private void addEntry(double num) {
+    private void addEntryAcc(int num2,int num3,int num4)
+    {
+        getActivity().runOnUiThread(new Runnable() {
 
-        LineData data = chartE.getData();
+            @Override
+            public void run() {
+                LineData data2 = chartX.getData();
+                LineData data3 = chartY.getData();
+                LineData data4 = chartZ.getData();
 
-        if (data == null) {
-            data = new LineData();
-            chartE.setData(data);
-        }
+                if (data2 == null) {
+                    data2 = new LineData();
+                    chartX.setData(data2);
+                }
+                if (data3 == null) {
+                    data3 = new LineData();
+                    chartY.setData(data3);
+                }
+                if (data4 == null) {
+                    data4 = new LineData();
+                    chartZ.setData(data4);
+                }
+                ILineDataSet set2 = data2.getDataSetByIndex(0);
+                ILineDataSet set3 = data3.getDataSetByIndex(0);
+                ILineDataSet set4 = data4.getDataSetByIndex(0);
 
-        ILineDataSet set = data.getDataSetByIndex(0);
-        // set.addEntry(...); // can be called as well
+                if (set2 == null) {
+                    set2 = createSet(2);
+                    data2.addDataSet(set2);
+                }
+                if (set3 == null) {
+                    set3 = createSet(3);
+                    data3.addDataSet(set3);
+                }
+                if (set4 == null) {
+                    set4 = createSet(4);
+                    data4.addDataSet(set4);
+                }
+                if (set2 != null)
+                    data2.addEntry(new Entry((float)set2.getEntryCount(), (float)num2), 0);
+                data2.notifyDataChanged();
+                if (set3 != null)
+                    data3.addEntry(new Entry((float)set3.getEntryCount(), (float)num3), 0);
+                data3.notifyDataChanged();
+                if (set4 != null)
+                    data4.addEntry(new Entry((float)set4.getEntryCount(), (float)num4), 0);
+                data4.notifyDataChanged();
 
-        if (set == null) {
-            set = createSet();
-            data.addDataSet(set);
-        }
+                chartX.notifyDataSetChanged();
+                chartX.setVisibleXRangeMaximum(112);//4초동안
+                // this automatically refreshes the chart (calls invalidate())
+                chartX.moveViewTo(data2.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+
+                chartY.notifyDataSetChanged();
+                chartY.setVisibleXRangeMaximum(112);//4초동안
+                // this automatically refreshes the chart (calls invalidate())
+                chartY.moveViewTo(data3.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
 
 
+                chartZ.notifyDataSetChanged();
+                chartZ.setVisibleXRangeMaximum(112);//4초동안
+                // this automatically refreshes the chart (calls invalidate())
+                chartZ.moveViewTo(data4.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+            }
 
-        data.addEntry(new Entry((float)set.getEntryCount(), (float)num), 0);
-        data.notifyDataChanged();
+        });//uithread
 
-        // let the chart know it's data has changed
-        chartE.notifyDataSetChanged();
-
-        chartE.setVisibleXRangeMaximum(512);//4초동안
-        // this automatically refreshes the chart (calls invalidate())
-        chartE.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
 
     }
 
-    private LineDataSet createSet() {
+    private void addEntry(float num) {
+        getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                LineData data = chartE.getData();
+
+                if (data == null) {
+                    data = new LineData();
+                    chartE.setData(data);
+                }
 
 
+                ILineDataSet set = data.getDataSetByIndex(0);
 
-        LineDataSet set = new LineDataSet(null, "ECG Data");
+                // set.addEntry(...); // can be called as well
+
+                if (set == null) {
+                    set = createSet(1);
+                    data.addDataSet(set);
+                }
+                if(set!=null)
+                    data.addEntry(new Entry((float)set.getEntryCount(), num), 0);
+                data.notifyDataChanged();
+
+
+                // let the chart know it's data has changed
+                chartE.notifyDataSetChanged();
+
+                chartE.setVisibleXRangeMaximum(512);//4초동안
+                // this automatically refreshes the chart (calls invalidate())
+                chartE.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+
+            }
+
+        });//uithread
+
+    }
+
+    private LineDataSet createSet(int flag) {
+
+        LineDataSet set=null;
+
+        if(getActivity()==null) return null;
+        switch (flag)
+        {
+            case 1:
+                set = new LineDataSet(null, "ECG Data");
+
+                set.setValueTextColor(getActivity().getColor(R.color.ecgcolor));
+                set.setColor(getActivity().getColor(R.color.ecgcolor));
+                break;
+            case 2:
+                set = new LineDataSet(null, "ACC X Data");
+
+                set.setValueTextColor(getActivity().getColor(R.color.accxcolor));
+                set.setColor(getActivity().getColor(R.color.accxcolor));
+                break;
+            case 3:
+                set = new LineDataSet(null, "ACC Y Data");
+
+                set.setValueTextColor(getActivity().getColor(R.color.accycolor));
+                set.setColor(getActivity().getColor(R.color.accycolor));
+                break;
+            case 4:
+                set = new LineDataSet(null, "ACC Z Data");
+
+                set.setValueTextColor(getActivity().getColor(R.color.acczcolor));
+                set.setColor(getActivity().getColor(R.color.acczcolor));
+                break;
+
+        }
+
+        if(set==null) return null;
         set.setLineWidth(1f);
         set.setDrawValues(false);
-        set.setValueTextColor(getColor(R.color.ecgcolor));
-        set.setColor(getColor(R.color.ecgcolor));
+
         set.setMode(LineDataSet.Mode.LINEAR);
         set.setDrawCircles(false);
         set.setHighLightColor(Color.rgb(190, 190, 190));
@@ -288,29 +391,11 @@ public class ecgView extends AppCompatActivity {
 
 
     @Override
-    protected void onStop()
-    {
-        super.onStop();
-        ((MainActivity)MainActivity.context_main).toggleECGView(false);
-        if(broadcastReceiver!=null)
-        {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-            broadcastReceiver=null;
-        }
-        if(t!=null)
-            t.interrupt();
-    }
-    @Override
-    protected  void onPause()
-    {
+    public void onPause() {
         super.onPause();
-    }
-    @Override
-    protected  void onResume()
-    {
-        super.onResume();
-    }
 
+        if(getActivity()!=null) getActivity().finish();
 
+    }
 
  }

@@ -12,9 +12,8 @@
                 <solid android:color="@color/panel1" />
 
                 <gradient
-                    android:startColor="#1647FF"
-                    android:centerColor="#2E57FF"
-                    android:endColor="#4BBDB4"
+                    android:startColor="@color/myblue"
+                    android:endColor="@color/mygreen"
                     android:angle="270"
                     android:type="linear" />
             </shape>

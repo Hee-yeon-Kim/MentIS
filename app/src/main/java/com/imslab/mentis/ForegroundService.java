@@ -10,10 +10,13 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -23,62 +26,142 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ForegroundService extends Service {
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
+    public static final String CHANNEL_ID2 = "ForegroundServiceChannel2";
+    public static final String CHANNEL_ID3 = "ConnectionErrorChannel2";
 
     public  List<String> time_list;
     public  List<String> data_list;
-
+    public List<Answer> answer_list;
 
     public String user_name="no_name";
+    public String user_pw="";
     public boolean isECGStart=false;
+    public boolean isFeedback=false;
     public boolean state0=false;
     public  boolean isCalli = false;
     public boolean openDB = false;
     public int userID=-1;
-    Thread th;
+    public int userGender=0;
+    public int userAge=0;
+
     Connection con = null;
 
     Statement st = null;
 
     IBinder mBinder = new MyBinder();
+    public Handler sendHandler=null;
+    Thread senddatathread = null;
+
+    Timer timer;
+    TimerTask TT;
+    NotificationManager notimanager;
+    PendingIntent pendingIntent, pendingIntent2;
 
     class MyBinder extends Binder {
         ForegroundService getService() { // 서비스 객체를 리턴
             return ForegroundService.this;
         }
     }
-    public ForegroundService getForegroundService()
-    {
-        if(th==null) return null;
-        return ForegroundService.this;
-    }
+
 
 
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        answer_list = new ArrayList<>();
         data_list= new ArrayList<>();
         time_list = new ArrayList<>();
         isCalli = false;
         openDB = false;
 
+        senddatathread = new sendDataThread();
+        senddatathread.setDaemon(true);
+        senddatathread.start();
+        notimanager = getSystemService(NotificationManager.class);
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent2 = new Intent(this, reportMain.class);
+
+        pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, 0);
+        pendingIntent2 = PendingIntent.getActivity(this,
+                0, notificationIntent2, 0);
+
+        //노티피케이션 하나 또 만들기
+        Notification notification2 = new NotificationCompat.Builder(this, CHANNEL_ID2)
+                .setContentTitle("**Please fill out the self report.**")
+               // .setContentText("**Please fill out the self report.**")
+                .setColor(getColor(R.color.colorPrimary))
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(pendingIntent2)
+                .build();
+        notification2.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+
+
+        timer = new Timer();
+        TT = new TimerTask() {
+            @Override
+            public void run() {
+                // 반복실행할 구문
+                notimanager.notify(2,notification2);
+
+            }
+
+        };
+
+
+
+    }
+    public void disconnectNotification(String str,int id)
+    {
+
+        Notification notification3 = new NotificationCompat.Builder(this, CHANNEL_ID3)
+                .setContentTitle(str+"is disconnected")
+                // .setContentText("자가 진단해주세요")
+                .setColor(getColor(R.color.colorPrimary))
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(pendingIntent)
+                .build();
+
+        notification3.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+
+        notimanager.notify(id,notification3);
+    }
+    public void EndingNotification()
+    {
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID3)
+                .setContentTitle("Today's test has ended.")
+                 .setContentText("** Please fill out the post-self report**")
+                .setColor(getColor(R.color.colorPrimary))
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(pendingIntent2)
+                .build();
+
+        notification.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+
+        notimanager.notify(5,notification);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
        // String input = intent.getStringExtra("inputExtra");
         createNotificationChannel();
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, 0);
+
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("MentIS 실행 중...")
@@ -93,52 +176,64 @@ public class ForegroundService extends Service {
 
         initialize();
 
-        NewRunnable nr = new NewRunnable() ;
-        th = new Thread(nr) ;
-        th.setDaemon(true);//앱이 종료되면 쓰레드 종료-이건 쓰레드 실행되기 전에 설정되어야하니까/
-        th.start() ;
-
-        //stopSelf();
+        timer.schedule(TT, 1000*60*60, 1000*60*60); //Timer 실행
 
         return mBinder;
+    }
+    public  void initialize() {
+        try {
+            data_list.clear();
+            time_list.clear();
+
+            answer_list.clear();
+            isCalli = false;
+         //   openDB = false;
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public boolean onUnbind(Intent intent)
     {
-        data_list.clear();
 
+        timer.cancel();
+        data_list.clear();
         time_list.clear();
+        answer_list.clear();
         isECGStart=false;
         state0=false;
         closeDB();
-        th.interrupt();
         return true;
     }
-    public  void initialize()
-    {
-        try {
-            data_list.clear();
-            time_list.clear();
-
-            isCalli = false;
-            openDB = false;
-
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+    class FeedbackThread extends Thread {
+        @Override
+        public void run() {
+            while(isFeedback)
+            {
+                getRespfromDB();//10초마다
+                try{
+                    Thread.sleep(10000);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
     //id에 맞는 분석된 정보 받아오는 쓰레드 - 이벤트 속성 - 설정할 때만 동작
     class NewRunnable3 implements Runnable {
         @Override
         public  void run()
         {
-            if(!getData())
+            if(!getDatafromDB())
             {
-                respondDB(6);
+                respondDB(  "데이터 베이스 write to monitoring table 가 거부되었습니다.");
+                openDB=false;
             }
 
         }
@@ -149,58 +244,117 @@ public class ForegroundService extends Service {
         @Override
         public  void run()
         {
-           if(connectionName())
-           {
-               respondDB(5);
-           }
-        }
-    }
-
-    //데이터 보내는 쓰레드 계속 동작함
-    class NewRunnable implements Runnable {
-        @Override
-        public void run()
-        {
-            while (true)
+            if(connectionName())
             {
-                //우선 db 가 연결이 되어있냐?
-                if(!openDB)
-                {
-                    openDB = connectDB();
-                   if(openDB) {
-                       ((MainActivity)MainActivity.context_main).changeDBicon(true);
-                   }
-                   else {
-                       if(time_list.size()>300) // 5분동안 미연결 시 지움
-                       {
-                           initialize();
-                       }
-                       ((MainActivity)MainActivity.context_main).changeDBicon(false);
-                      return;
-                   }
-                }
-
-                int sleeptime = 10000;//10초마다 sleep
-
-                int willsend = time_list.size();//애초에 둘다 연결될때 이 리스트가 채워지니깐
-                if(willsend!=0)
-                {
-                   // 10초마다 쌓인 거 다 집어넣기
-                    addItemToDB();
-                }
-
-                try
-                {
-                    Thread.sleep(sleeptime);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace() ;
-                }
+                ((MainActivity)MainActivity.context_main).isLogin = true;
+                ((MainActivity)MainActivity.context_main).updateNameLabel(true);
+            }
+            else
+            {
+                clearUser();
             }
         }
     }
 
+    //데이터 보내는 쓰레드 oncreate부터 계속 동작함
+    class sendDataThread extends Thread {
+        @Override
+        public void run()
+        {
+            //우선 db 가 연결이 되어있냐?
+
+            while(!openDB)//30초동안 계속 서버 연결 시도 1초 간격으로
+            {
+                openDB = connectDB();
+                    if(openDB) {
+                        ((MainActivity)MainActivity.context_main).changeDBicon(true);
+                        break;
+                    }
+                    else
+                    {
+                        ((MainActivity)MainActivity.context_main).changeDBicon(false);
+                        try {
+                            Thread.sleep(1000);
+                        }
+                        catch(Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+
+            }
+
+            //서버가 처음 연결되었을 때 이제 받음
+            Looper.prepare();
+            sendHandler = new Handler(Looper.myLooper()) {
+                @Override
+                public void handleMessage(Message msg)
+                {
+                    if(openDB)
+                    {
+                        //받은 메시지 db로 보내기
+                        try {
+                            Bundle bundle = msg.getData();
+                            if (bundle.getBoolean("Flag")) {//그냥 데이터 제출
+                                String _time = bundle.getString("DATATIME");
+                                String _data = bundle.getString("FULLDATA");
+
+                                time_list.add(_time);
+                                data_list.add(_data);
+                            }
+                            else//응답데이터 제출
+                            {
+                                connectionJDBCTest(2,bundle);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                            Log.d("CUSTOMERROR","서비스핸들러 받기오류");
+                        }
+
+                        int willsend = time_list.size();//애초에 둘다 연결될때 이 리스트가 채워지니깐
+                        if(willsend>30)//30초 단위로 보냄
+                        {
+                            for (int i = 0; i < willsend; i++) {
+                                if (!connectionJDBCTest(1,null)) {
+                                    ((MainActivity) MainActivity.context_main).changeDBicon(false);
+                                    openDB=false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if(!openDB)//혹시나 중간에 오류로 감지가되어 or 연결이 끊겨서 db가 안열렸을 때
+                    {
+                        if(time_list.size()>1200)//20분 쌓임-과부하 염려
+                        {
+                            for(int i=0; i<900;i++) {
+                                time_list.remove(0);
+                                data_list.remove(0);
+                            }
+                            Log.d("CUSTOMERROR","과부하");//오류 띄우기
+                        }
+                        openDB = connectDB();
+                        if(openDB) {
+                            ((MainActivity) MainActivity.context_main).changeDBicon(true);
+                        }
+                        else
+                        {
+                            if(time_list.size()>=300) // 5분동안 미연결 시 지움
+                            {
+                                data_list.clear();
+                                time_list.clear();
+                            }
+                            respondDB("서버 연결을 확인해주세요.");//오류띄우기
+                        }
+                    }
+                }
+            };
+            Looper.loop();
+        }
+    }
 
     public void nameEvent()
     {
@@ -217,133 +371,260 @@ public class ForegroundService extends Service {
         th3.start() ;
     }
 
-    private void   addItemToDB() {
-        int sendsize = time_list.size();//가변적인 리스트는 항상 특정 타겟시기에 갯수 int로 따로 담아서 하기
-
-        if(sendsize==0) return;
-
-        for(int i =0; i<sendsize;i++)
+    public void feedbackdataEvent(boolean flag)
+    {
+        if(flag){
+            isFeedback=true;
+            FeedbackThread th3 = new FeedbackThread() ;
+            th3.setDaemon(true);
+            th3.start() ;
+        }
+        else
         {
-            if(!connectionJDBCTest()) {
-                ((MainActivity)MainActivity.context_main).changeDBicon(false);
-                return;
-            }
+            isFeedback=false;
 
         }
-
     }
-    // 검색
 
 
 
-    void respondDB(int flag)
+    void clearUser()
+    {
+        userID = -1;
+        user_pw="0000";
+        user_name="no_name";
+        ((MainActivity)MainActivity.context_main).isLogin=false;
+        ((MainActivity)MainActivity.context_main).updateNameLabel(false);
+    }
+
+
+    void respondDB(final String text)
     {
 
         Handler handler = new Handler(Looper.getMainLooper());
 
 
-            handler.post(new Runnable() {
+        handler.post(new Runnable() {
 
-                @Override
-                public void run() {
-                    if (flag == 1) {
+            @Override
+            public void run() {
 
-                        Toast.makeText(getApplicationContext(),
-                                "데이터 베이스-write to user table가 거부 되었습니다",
-                                Toast.LENGTH_SHORT).show();
-                    } else if (flag == 2) {
-                        Toast.makeText(getApplicationContext(),
-                                "데이터 베이스 write to monitoring table 가 거부되었습니다.",
-                                Toast.LENGTH_SHORT).show();
 
-                    } else if (flag == 3) {
-                        Toast.makeText(getApplicationContext(),
-                                "사용자에 할당된 ID가 없습니다.",
-                                Toast.LENGTH_SHORT).show();
-                    }else if(flag==5)
-                    {
-                        Toast.makeText(getApplicationContext(),
-                                "ID 설정이 완료되었습니다.",
-                                Toast.LENGTH_SHORT).show();
-                    }else if(flag==6)
-                    {
-                        Toast.makeText(getApplicationContext(),
-                                "데이터를 받아오는 데 실패하였습니다.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-            });
+                Toast.makeText(getApplicationContext(),
+                        text,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
+
+
+
     public boolean connectionName() {
 
-        if(!openDB) return false;
-
-        String content = null;
-        StringBuilder towrite= new StringBuilder();
-        towrite.append("insert into user values (");
-        towrite.append("'");
-        towrite.append(user_name);//String
-        towrite.append("'");
-        towrite.append(",,,,)");
-
-        content= "INSERT INTO user (name,sex,age,height,weight) VALUES ('"+user_name+"',1,29,170,60)";
-        try {
-
-            st.executeUpdate(content);
-
-        } catch (SQLException e) {
-
+        if(!openDB)
+        {
+            respondDB("서버 오류");//서버 오류
+            return false;
+        }
+        StringBuilder sb= new StringBuilder();
+        int tmp_id=-100;
+        String tmp_pw="@";
+        String sql = sb.append("SELECT * FROM " + "user" + " WHERE")
+                .append(" name = ")
+                .append("'")
+                .append(user_name)
+                .append("'")
+                .append(";").toString();
+        try
+        {
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next()){
+                tmp_id= rs.getInt("user_id");
+                tmp_pw = rs.getString("password");
+            }
+        }
+        catch (Exception e)
+        {
             // TODO Auto-generated catch block
+            respondDB("로그인 오류");
             e.printStackTrace();
+            return  false;
+        }
 
-            respondDB(1);
+        //id 얻음
+        if(tmp_id==-100)// 신규가입하는 경우
+        {
+            userID = tmp_id;//-1 으로 DB에 뜨면 id넘버 매칭 잘 못된거임
+            //아이디 비밀번호 db에 insert
+            String content = "INSERT INTO user (name,password,sex,age,height,weight) VALUES ('" + user_name + "','"+user_pw+"',"+userGender+','+userAge+','+"170,60)";
+            try {
+                st.executeUpdate(content);//회원가입 완료
+            } catch (SQLException e) {
 
-            return false;//"데이터베이스 쓰기 거부";
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                respondDB("데이터 베이스-write to user table가 거부 되었습니다");//회원가입 오류
+                return false;//"데이터베이스 쓰기 거부";
+            }
 
-        }finally {
-            StringBuilder sb= new StringBuilder();
+            try
+            {
+                //회원가입이 잘 된 후에 여기 도달
+                StringBuilder sb2= new StringBuilder();
+                String sql2 = sb2.append("SELECT * FROM " + "user" + " WHERE")
+                        .append(" name = ")
+                        .append("'")
+                        .append(user_name)
+                        .append("'")
+                        .append(";").toString();
+                ResultSet rs = st.executeQuery(sql2);
+                while(rs.next()){
+                    userID = rs.getInt("user_id");
+                    user_pw = rs.getString("password");
+                }
+            } catch (SQLException e)
+            {
+                // 회원가입은 되었는 데 로그인이 안됨
+                respondDB( "회원가입 오류-회원가입을 다시 시도해주세요.");
+                e.printStackTrace();
+                return  false;
+            }
 
-            String sql = sb.append("SELECT * FROM " + "user" + " WHERE")
+
+            //회원가입 완료되고 id 매칭하기-20번 도전
+            for(int i=0; i<20; i++)
+            {
+                if(findID()) break;
+                if(i==19) {
+                    respondDB( "회원가입 오류-회원가입을 다시 시도해주세요.");
+                    return false;
+                }
+            }
+
+            respondDB(  "계정 생성이 완료되었습니다.");
+            return true;
+        }
+        else
+        {
+            //이미 존재
+            if(tmp_pw.equals(user_pw))
+            {
+                userID = tmp_id;
+                respondDB( "로그인 되었습니다");//로그인 되었습니다.
+
+                //로그인 성공
+                return true;
+            }
+            else
+            {
+                //로그인 실패
+                respondDB("비밀번호가 일치하지 않습니다.");
+                return false;
+            }
+        }
+    }
+
+    private boolean findID()
+    {
+        try
+        {
+            StringBuilder sb2= new StringBuilder();
+
+            String sql2 = sb2.append("SELECT * FROM " + "user" + " WHERE")
                     .append(" name = ")
                     .append("'")
                     .append(user_name)
                     .append("'")
                     .append(";").toString();
-            try {
-                ResultSet rs = st.executeQuery(sql);
-                while(rs.next()){
-                    userID= rs.getInt("user_id");
-                }
-
-
-
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                respondDB(3);
-                e.printStackTrace();
-                return  false;
+            ResultSet rs = st.executeQuery(sql2);
+            while(rs.next()){
+                userID = rs.getInt("user_id");
+                user_pw = rs.getString("password");
             }
-            return  true;
-
+        } catch (Exception e)
+        {
+            // 회원가입은 되었는 데 로그인이 안됨
+            e.printStackTrace();
+            return  false;
         }
 
-    }
-    public Boolean getData()
-    {
-        StringBuilder sb= new StringBuilder();
+        if(userID>0)
+        {
+            ((MainActivity)MainActivity.context_main).isLogin = true;
+        }
+        else
+        {
+            return false;
+        }
 
-        String sql = sb.append("SELECT * FROM " + "user_analysis" + " WHERE")
-                .append(" user_id = ")
-                .append(userID)
-                .append(";").toString();
+        return true;
+    }
+
+
+    public Boolean getRespfromDB()
+    {
+
+
+        String sql = "SELECT * FROM " + "user_feedback" + " WHERE"
+                +" user_id = "
+                +userID
+                ;
+
+        String datetime =null;
+
+        int resp =-100;
+        try {
+            ResultSet rs = st.executeQuery(sql);
+
+            while(rs.next()){
+                datetime = rs.getString("time");
+                resp = rs.getInt("RESP");
+
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return  false;
+        }
+
+            if(datetime!=null && resp!=-100) {
+                //유니티로 보내자
+                Intent sendIntent = new Intent();
+                sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_FROM_BACKGROUND|Intent.FLAG_INCLUDE_STOPPED_PACKAGES  );
+                sendIntent.setAction("com.ims.mentis.feedbackscore");
+                Bundle extras= new Bundle();
+                extras.putString("Time",datetime);
+                extras.putInt("Score",resp);
+                sendIntent.putExtra("FeedbackBundle",extras);
+
+                sendBroadcast(sendIntent);
+
+
+            }
+            else {
+                //respondDB( "NOD");//측정 데이터가 부족합니다.
+
+            }
+
+
+        return  true;
+    }
+
+    public Boolean getDatafromDB()
+    {
+
+
+        String sql = "SELECT * FROM " + "user_analysis" + " WHERE"
+                +" user_id = "
+                +userID
+                +";";
 
         ArrayList<Integer> ecg_sqa_list=new ArrayList<>();
         ArrayList<Integer> ppg_sqa_list=new ArrayList<>();
-        ArrayList<Integer> HRmean_list=new ArrayList<>();
-        ArrayList<Integer> STmean_list=new ArrayList<>();
-        ArrayList<Integer> RESP_list=new ArrayList<>();
+        ArrayList<Integer>  HRmean_list=new ArrayList<>();
+        ArrayList<Integer>  STmean_list=new ArrayList<>();
+        ArrayList<Integer>  RESP_list=new ArrayList<>();
         ArrayList<Integer> Stress_list=new ArrayList<>();
         ArrayList<String> DateTime_list=new ArrayList<>();
 
@@ -371,19 +652,27 @@ public class ForegroundService extends Service {
             e.printStackTrace();
             return  false;
         }
-        finally {
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("TIME",DateTime_list);
-            bundle.putIntegerArrayList("ECG_SQA",ecg_sqa_list);
-            bundle.putIntegerArrayList("PPG_SQA",ppg_sqa_list);
-            bundle.putIntegerArrayList("HRmean",HRmean_list);
-            bundle.putIntegerArrayList("STmean",STmean_list);
-            bundle.putIntegerArrayList("RESP",RESP_list);
-            bundle.putIntegerArrayList("Stress",Stress_list);
 
-            ((MainActivity)MainActivity.context_main).startStressView(bundle);
 
-        }
+            if(DateTime_list.size()>0) {
+
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("TIME", DateTime_list);
+                bundle.putIntegerArrayList("ECG_SQA", ecg_sqa_list);
+                bundle.putIntegerArrayList("PPG_SQA", ppg_sqa_list);
+                bundle.putIntegerArrayList("HRmean", HRmean_list);
+                bundle.putIntegerArrayList("STmean", STmean_list);
+                bundle.putIntegerArrayList("RESP", RESP_list);
+                bundle.putIntegerArrayList("Stress", Stress_list);
+
+                ((MainActivity) MainActivity.context_main).startStressView(bundle,true);
+            }
+            else {
+                respondDB( "측정 데이터가 더 필요합니다.");//측정 데이터가 부족합니다.
+                ((MainActivity) MainActivity.context_main).startStressView(null,false);
+            }
+
+
         return  true;
     }
     public Boolean closeDB()
@@ -397,7 +686,7 @@ public class ForegroundService extends Service {
                     con=null;
                     st=null;
 
-                } catch (SQLException e) {
+                } catch (Exception e) {
 
                     e.printStackTrace();
                     return false;// "데이터베이스 종료 거부";
@@ -415,7 +704,7 @@ public class ForegroundService extends Service {
             Class.forName("org.mariadb.jdbc.Driver");
 
 
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
             return  false;//"error1";
@@ -427,10 +716,10 @@ public class ForegroundService extends Service {
 
         try {
 
-            con = DriverManager.getConnection("jdbc:mariadb://192.168.0.15:3306/iot_stress", "root", "imslab!@#");
+            con = DriverManager.getConnection("jdbc:mariadb://141.223.196.216:5522/iot_stress", "root", "imslab!@#");
             st = con.createStatement();
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;//"데이터베이스 연동이 되지 않습니다.(errorcode:1)";
         }
@@ -438,38 +727,102 @@ public class ForegroundService extends Service {
     }
 
 
-    public boolean connectionJDBCTest() {
-
+    public boolean connectionJDBCTest(int flag,Bundle bundle) {
         String content = "";
 
-        StringBuilder towrite= new StringBuilder();
-        towrite.append("insert into monitoring values (");
-        towrite.append(userID);//id
-        towrite.append(",'");
-        towrite.append(time_list.get(0));//String
-        time_list.remove(0);
-        towrite.append("','");
-        towrite.append(data_list.get(0));
-        data_list.remove(0);
-        towrite.append("',");
-        if(isCalli) towrite.append("1)");
-        else towrite.append("0)");
+        if(flag==1) {//데이터 보내기
 
+            StringBuilder towrite = new StringBuilder();
+            towrite.append("insert into monitoring values (");
+            towrite.append(userID);//id
+            towrite.append(",'");
+            towrite.append(time_list.get(0));//String
+            time_list.remove(0);
+            towrite.append("','");
+            towrite.append(data_list.get(0));
+            data_list.remove(0);
+            towrite.append("',");
+            if (isCalli) towrite.append("1)");
+            else towrite.append("0)");
+            content = towrite.toString();//"insert into monitoring values (1,'2020/09/20 05:20:01','123456',1)";
+        }
+        else if(flag==2) //자가진단테스트 보내기
+        {
+            String reporttime= bundle.getString("REPORTTIME");
+            int[] stringdata = bundle.getIntArray("REPORTDATA");
+            int mode = bundle.getInt("REPORTMODE");
 
-        content = towrite.toString();//"insert into monitoring values (1,'2020/09/20 05:20:01','123456',1)";
+            if(reporttime==null||stringdata==null){
+                return false;
+            }
 
+            StringBuilder towrite = new StringBuilder();
+            if(mode==1)
+            {
+                towrite.append("insert into user_pss values (");
+                towrite.append(userID);//id
+                towrite.append(",'");
+                towrite.append(reporttime);//report time 문자열
+                towrite.append("',");
+                towrite.append(userAge);//report time 문자열
+                towrite.append(",");
+                towrite.append(userGender);//report time 문자열
+                towrite.append(",");
+
+                towrite.append(stringdata[0]);
+                towrite.append(",");
+                towrite.append(stringdata[1]);
+                towrite.append(",");
+                towrite.append(stringdata[2]);
+                towrite.append(",");
+                towrite.append(stringdata[3]);
+                towrite.append(",");
+                towrite.append(stringdata[4]);
+                towrite.append(",");
+                towrite.append(stringdata[5]);
+                towrite.append(",");
+                towrite.append(stringdata[6]);
+                towrite.append(",");
+                towrite.append(stringdata[7]);
+                towrite.append(",");
+                towrite.append(stringdata[8]);
+                towrite.append(",");
+                towrite.append(stringdata[9]);
+            }
+            else {
+                towrite.append("insert into user_question values (");
+
+                towrite.append(userID);//id
+                towrite.append(",'");
+                towrite.append(reporttime);//report time 문자열
+                towrite.append("',");
+
+                towrite.append(stringdata[0]);
+                towrite.append(",");
+                towrite.append(stringdata[1]);
+                towrite.append(",");
+                towrite.append(stringdata[2]);
+                towrite.append(",");
+                towrite.append(stringdata[3]);
+                towrite.append(",");
+                towrite.append(stringdata[4]);
+            }
+
+            towrite.append(")");
+            content = towrite.toString();//"insert into monitoring values (1,'2020/09/20 05:20:01','123456',1)";
+        }
         try {
 
             st.executeUpdate(content);
 
-            } catch (SQLException e) {
+            } catch (Exception e) {
 //한번 에러나면 끊고 다시 들어가도록
                 // TODO Auto-generated catch block
                 e.printStackTrace();
                 openDB = false;
                 closeDB();
                 ((MainActivity)MainActivity.context_main).changeDBicon(false);
-                respondDB(2);
+                respondDB(  "데이터 베이스 write to question table 가 거부되었습니다.");
                 return false;//"데이터베이스 쓰기 거부";
 
             }
@@ -529,10 +882,7 @@ public class ForegroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-
     }
-
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -541,9 +891,22 @@ public class ForegroundService extends Service {
                     "Foreground Service Channel",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
+            NotificationChannel serviceChannel2 = new NotificationChannel(
+                    CHANNEL_ID2,
+                    "Foreground Service Channel2",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationChannel serviceChannel3 = new NotificationChannel(
+                    CHANNEL_ID3,
+                    "Foreground Service Channel3",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
 
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
+            notimanager.createNotificationChannel(serviceChannel);
+            notimanager.createNotificationChannel(serviceChannel2);
+            notimanager.createNotificationChannel(serviceChannel3);
+
+
         }
     }
 }

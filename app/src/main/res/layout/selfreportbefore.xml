@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorGray"
+    android:fontFamily="@font/nanumsquareeb"
+    >
+
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/ecgtest"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:text="가나다라"-->
+    <!--            />-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
+
+        >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="0= Never / 1= Almost Never / 2= Sometimes \n 3= Fairly Often / 4= Very Often"
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            >
+
+        <TextView
+            android:id="@+id/preq1"
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="In the last month, how often have you been upset because of something that happened unexpectedly?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup1"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq1"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq1_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq1_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq1_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq1_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq1_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq2"
+            android:layout_marginHorizontal="10dp"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you felt that you were unable to control the important things in your life?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup2"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq2"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq2_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq2_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq2_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq2_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq2_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq3"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you felt nervous and 'stressed'?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup3"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq3"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq3_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq3_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq3_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq3_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq3_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq4"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you felt confident about your ability to handle your personal problems?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup4"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq4"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq4_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq4_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq4_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq4_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq4_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq5"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you felt that things were going your way?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup5"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq5"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq5_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq5_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq5_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq5_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq5_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq6"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you found that you could not cope with all the things that you had to do?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup6"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq6"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq6_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq6_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq6_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq6_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq6_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq7"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you been able to control irritations in you life?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup7"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq7"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq7_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq7_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq7_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq7_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq7_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq8"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you felt that you were on top of things?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup8"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq8"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq8_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq8_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq8_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq8_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq8_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq9"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you been angered because of things that were outside of your control?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup9"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq9"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq9_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq9_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq9_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq9_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq9_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+
+            >
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/preq10"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?"/>
+
+            <RadioGroup
+                android:id="@+id/preradioGroup10"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_below="@id/preq10"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:id="@+id/preq10_1"
+                    android:layout_width="0dp"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/preq10_2"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"/>
+                <RadioButton
+                    android:id="@+id/preq10_3"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq10_4"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="4"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/preq10_5"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:button="@null"
+                    android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/donereport"
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/rounded"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:text="제출하기"
+            android:textSize="17sp"/>
+    </LinearLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

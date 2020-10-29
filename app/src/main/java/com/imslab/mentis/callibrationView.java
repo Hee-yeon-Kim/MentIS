@@ -103,7 +103,7 @@ public class callibrationView extends AppCompatActivity {
                 CountDown_Tv.setText("00:00");
                 waveView.pauseAnimation();
                 ((MainActivity)MainActivity.context_main).setIsCalli(false);
-                ((MainActivity)MainActivity.context_main).setInit(false);
+               // ((MainActivity)MainActivity.context_main).setInit(false);
                 finish();
 
                 //   MyProgressBar.setProgress(100);

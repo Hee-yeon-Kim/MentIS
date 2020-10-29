@@ -24,6 +24,12 @@ public class MiddleActivity extends AppCompatActivity {
 
         activityWasJustCreated = false;
     }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        ((MainActivity)MainActivity.context_main).serviceClass.feedbackdataEvent(false);
+    }
 
 
 }
