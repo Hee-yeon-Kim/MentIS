@@ -1,2 +1,2 @@
-include ':app', ':FastBleLib', ':unityLibrary'
+include ':app', ':FastBleLib', ':unityLibrary2'
 rootProject.name='MentIS'

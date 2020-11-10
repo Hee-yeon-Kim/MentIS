@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class ecgView extends Fragment {
 
-    private LineChart chartE,chartX,chartY,chartZ;
+    private LineChart chartE;//,chartX,chartY,chartZ;
     public Handler ecgGraphHandler;
 
      Thread drawgraphThread;
@@ -38,21 +38,21 @@ public class ecgView extends Fragment {
         super.onCreate(savedInstanceState);
         View view =inflater.inflate(R.layout.ecgview, container, false);
         
-        drawgraphThread = new drawGraphThread();
-        drawgraphThread.setDaemon(true);
-        drawgraphThread.start() ;
+//        drawgraphThread = new drawGraphThread();
+//        drawgraphThread.setDaemon(true);
+//        drawgraphThread.start() ;
         return view;
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         chartE = (LineChart ) view.findViewById(R.id.ECGChart);
         SettingChart(chartE,1);
-        chartX = (LineChart) view.findViewById(R.id.ACCXChart);
-        SettingChart(chartX,2);
-        chartY= (LineChart) view.findViewById(R.id.ACCYChart);
-        SettingChart(chartY,3);
-        chartZ = (LineChart) view.findViewById(R.id.ACCZChart);
-        SettingChart(chartZ,4);
+//        chartX = (LineChart) view.findViewById(R.id.ACCXChart);
+//        SettingChart(chartX,2);
+//        chartY= (LineChart) view.findViewById(R.id.ACCYChart);
+//        SettingChart(chartY,3);
+//        chartZ = (LineChart) view.findViewById(R.id.ACCZChart);
+//        SettingChart(chartZ,4);
 
     }
 
@@ -118,7 +118,7 @@ public class ecgView extends Fragment {
                                             int accy = accYlist.get(0);
                                             int accz = accZlist.get(0);
 
-                                            addEntryAcc(accx, accy, accz);
+                                          //  addEntryAcc(accx, accy, accz);
                                             accXlist.remove(0);
                                             accYlist.remove(0);
                                             accZlist.remove(0);
@@ -234,76 +234,79 @@ public class ecgView extends Fragment {
         chart.invalidate();
     }
 
-    private void addEntryAcc(int num2,int num3,int num4)
+//    private void addEntryAcc(int num2,int num3,int num4)
+//    {
+//        getActivity().runOnUiThread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                LineData data2 = chartX.getData();
+//                LineData data3 = chartY.getData();
+//                LineData data4 = chartZ.getData();
+//
+//                if (data2 == null) {
+//                    data2 = new LineData();
+//                    chartX.setData(data2);
+//                }
+//                if (data3 == null) {
+//                    data3 = new LineData();
+//                    chartY.setData(data3);
+//                }
+//                if (data4 == null) {
+//                    data4 = new LineData();
+//                    chartZ.setData(data4);
+//                }
+//                ILineDataSet set2 = data2.getDataSetByIndex(0);
+//                ILineDataSet set3 = data3.getDataSetByIndex(0);
+//                ILineDataSet set4 = data4.getDataSetByIndex(0);
+//
+//                if (set2 == null) {
+//                    set2 = createSet(2);
+//                    data2.addDataSet(set2);
+//                }
+//                if (set3 == null) {
+//                    set3 = createSet(3);
+//                    data3.addDataSet(set3);
+//                }
+//                if (set4 == null) {
+//                    set4 = createSet(4);
+//                    data4.addDataSet(set4);
+//                }
+//                if (set2 != null)
+//                    data2.addEntry(new Entry((float)set2.getEntryCount(), (float)num2), 0);
+//                data2.notifyDataChanged();
+//                if (set3 != null)
+//                    data3.addEntry(new Entry((float)set3.getEntryCount(), (float)num3), 0);
+//                data3.notifyDataChanged();
+//                if (set4 != null)
+//                    data4.addEntry(new Entry((float)set4.getEntryCount(), (float)num4), 0);
+//                data4.notifyDataChanged();
+//
+//                chartX.notifyDataSetChanged();
+//                chartX.setVisibleXRangeMaximum(112);//4초동안
+//                // this automatically refreshes the chart (calls invalidate())
+//                chartX.moveViewTo(data2.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+//
+//                chartY.notifyDataSetChanged();
+//                chartY.setVisibleXRangeMaximum(112);//4초동안
+//                // this automatically refreshes the chart (calls invalidate())
+//                chartY.moveViewTo(data3.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+//
+//
+//                chartZ.notifyDataSetChanged();
+//                chartZ.setVisibleXRangeMaximum(112);//4초동안
+//                // this automatically refreshes the chart (calls invalidate())
+//                chartZ.moveViewTo(data4.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+//            }
+//
+//        });//uithread
+//
+//
+//    }
+    public void goTest(float num)
     {
-        getActivity().runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                LineData data2 = chartX.getData();
-                LineData data3 = chartY.getData();
-                LineData data4 = chartZ.getData();
-
-                if (data2 == null) {
-                    data2 = new LineData();
-                    chartX.setData(data2);
-                }
-                if (data3 == null) {
-                    data3 = new LineData();
-                    chartY.setData(data3);
-                }
-                if (data4 == null) {
-                    data4 = new LineData();
-                    chartZ.setData(data4);
-                }
-                ILineDataSet set2 = data2.getDataSetByIndex(0);
-                ILineDataSet set3 = data3.getDataSetByIndex(0);
-                ILineDataSet set4 = data4.getDataSetByIndex(0);
-
-                if (set2 == null) {
-                    set2 = createSet(2);
-                    data2.addDataSet(set2);
-                }
-                if (set3 == null) {
-                    set3 = createSet(3);
-                    data3.addDataSet(set3);
-                }
-                if (set4 == null) {
-                    set4 = createSet(4);
-                    data4.addDataSet(set4);
-                }
-                if (set2 != null)
-                    data2.addEntry(new Entry((float)set2.getEntryCount(), (float)num2), 0);
-                data2.notifyDataChanged();
-                if (set3 != null)
-                    data3.addEntry(new Entry((float)set3.getEntryCount(), (float)num3), 0);
-                data3.notifyDataChanged();
-                if (set4 != null)
-                    data4.addEntry(new Entry((float)set4.getEntryCount(), (float)num4), 0);
-                data4.notifyDataChanged();
-
-                chartX.notifyDataSetChanged();
-                chartX.setVisibleXRangeMaximum(112);//4초동안
-                // this automatically refreshes the chart (calls invalidate())
-                chartX.moveViewTo(data2.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
-
-                chartY.notifyDataSetChanged();
-                chartY.setVisibleXRangeMaximum(112);//4초동안
-                // this automatically refreshes the chart (calls invalidate())
-                chartY.moveViewTo(data3.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
-
-
-                chartZ.notifyDataSetChanged();
-                chartZ.setVisibleXRangeMaximum(112);//4초동안
-                // this automatically refreshes the chart (calls invalidate())
-                chartZ.moveViewTo(data4.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
-            }
-
-        });//uithread
-
-
+        addEntry(num);
     }
-
     private void addEntry(float num) {
         getActivity().runOnUiThread(new Runnable() {
 
@@ -334,7 +337,7 @@ public class ecgView extends Fragment {
                 // let the chart know it's data has changed
                 chartE.notifyDataSetChanged();
 
-                chartE.setVisibleXRangeMaximum(512);//4초동안
+                chartE.setVisibleXRangeMaximum(100);//4초동안
                 // this automatically refreshes the chart (calls invalidate())
                 chartE.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
 

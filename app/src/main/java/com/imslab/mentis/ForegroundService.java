@@ -99,7 +99,8 @@ public class ForegroundService extends Service {
         pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
         pendingIntent2 = PendingIntent.getActivity(this,
-                0, notificationIntent2, 0);
+                0, notificationIntent2, PendingIntent.FLAG_UPDATE_CURRENT
+        );
 
         //노티피케이션 하나 또 만들기
         Notification notification2 = new NotificationCompat.Builder(this, CHANNEL_ID2)
@@ -117,7 +118,13 @@ public class ForegroundService extends Service {
             @Override
             public void run() {
                 // 반복실행할 구문
-                notimanager.notify(2,notification2);
+                try {
+                    notimanager.cancel(2);
+                    notimanager.notify(2, notification2);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -129,32 +136,45 @@ public class ForegroundService extends Service {
     public void disconnectNotification(String str,int id)
     {
 
-        Notification notification3 = new NotificationCompat.Builder(this, CHANNEL_ID3)
-                .setContentTitle(str+"is disconnected")
-                // .setContentText("자가 진단해주세요")
-                .setColor(getColor(R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent)
-                .build();
+       try {
+           notimanager.cancel(id);
+           Notification notification3 = new NotificationCompat.Builder(this, CHANNEL_ID3)
+                   .setContentTitle(str + "is disconnected")
+                   // .setContentText("자가 진단해주세요")
+                   .setColor(getColor(R.color.colorPrimary))
+                   .setSmallIcon(R.drawable.ic_launcher_foreground)
+                   .setContentIntent(pendingIntent)
+                   .build();
 
-        notification3.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+           notification3.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_INSISTENT | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
 
-        notimanager.notify(id,notification3);
+           notimanager.notify(id, notification3);
+       }
+       catch (Exception e)
+       {
+           e.printStackTrace();
+       }
     }
     public void EndingNotification()
     {
 
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID3)
-                .setContentTitle("Today's test has ended.")
-                 .setContentText("** Please fill out the post-self report**")
-                .setColor(getColor(R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent2)
-                .build();
+        try {
+            notimanager.cancel(5);
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID3)
+                    .setContentTitle("Today's test has ended.")
+                    .setContentText("** Please fill out the post-self report**")
+                    .setColor(getColor(R.color.colorPrimary))
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentIntent(pendingIntent2)
+                    .build();
 
-        notification.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+            notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_INSISTENT | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
 
-        notimanager.notify(5,notification);
+            notimanager.notify(5, notification);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override

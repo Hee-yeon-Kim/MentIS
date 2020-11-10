@@ -255,16 +255,16 @@ public class SelfReport extends Fragment {
         //완료
         Bundle bundle = new Bundle();
         int tmp[] = new int[10];
-        tmp[0]=ans1;
-        tmp[1]=ans2;
-        tmp[2]=ans3;
-        tmp[3]=ans4;
-        tmp[4]=ans5;
-        tmp[5]=ans6;
-        tmp[6]=ans7;
-        tmp[7]=ans8;
-        tmp[8]=ans9;
-        tmp[9]=ans10;
+        tmp[0]=ans1-1;
+        tmp[1]=ans2-1;
+        tmp[2]=ans3-1;
+        tmp[3]=ans4-1;
+        tmp[4]=ans5-1;
+        tmp[5]=ans6-1;
+        tmp[6]=ans7-1;
+        tmp[7]=ans8-1;
+        tmp[8]=ans9-1;
+        tmp[9]=ans10-1;
 
         bundle.putBoolean("Flag",false);
         bundle.putString("REPORTTIME",mytime);

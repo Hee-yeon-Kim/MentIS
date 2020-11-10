@@ -154,11 +154,11 @@ public class ingReport extends Fragment {
         //완료
         Bundle bundle = new Bundle();
         int tmp[] = new int[5];
-        tmp[0]=ans1;
-        tmp[1]=ans2;
-        tmp[2]=ans3;
-        tmp[3]=ans4;
-        tmp[4]=ans5;
+        tmp[0]=ans1-1;
+        tmp[1]=ans2-1;
+        tmp[2]=ans3-1;
+        tmp[3]=ans4-1;
+        tmp[4]=ans5-1;
         bundle.putBoolean("Flag",false);
         bundle.putString("REPORTTIME",mytime);
         bundle.putIntArray("REPORTDATA",tmp);
