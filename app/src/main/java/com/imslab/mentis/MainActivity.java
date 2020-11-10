@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
     private TextView E4statusLabel;
 
-   // private static Handler mHandler ;
+    // private static Handler mHandler ;
 
     String user_name="no_name";
 
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         setContentView(R.layout.activity_main);
         context_main = this; // onCreate에서 this 할당
 
-     //   mHandler = new Handler() ;
+        //   mHandler = new Handler() ;
 
         bvp_list= new ArrayList<>();
         temp_list= new ArrayList<>();
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         userSetting.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-               //로그인 다이얼로그
+                //로그인 다이얼로그
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 LinearLayout loginLayout = (LinearLayout) vi.inflate(R.layout.logindialog, null);
                 final EditText id = (EditText)loginLayout.findViewById(R.id.id);
@@ -222,12 +222,12 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                                 String tmp_age = age.getText().toString();
                                 int userAge=0;
                                 try {
-                                     userAge =  Integer.parseInt(tmp_age);
+                                    userAge =  Integer.parseInt(tmp_age);
                                 }
                                 catch (NumberFormatException e)
                                 {
-                                   e.printStackTrace();
-                                   userAge=0;
+                                    e.printStackTrace();
+                                    userAge=0;
                                     Toast.makeText(MainActivity.this, "나이 입력 오류", Toast.LENGTH_SHORT).show();
                                 }
                                 int rb4 = genderRadio.getCheckedRadioButtonId();
@@ -346,8 +346,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 }
 //                else
 //                {
-                    if(!isServer) myToast("서버 연결이 되지 않았습니다.");
-                    else myToast("로그인 해주세요.");
+                if(!isServer) myToast("서버 연결이 되지 않았습니다.");
+                else myToast("로그인 해주세요.");
 //                }
             }
         });
@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         calli.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               startCaliView();
+                startCaliView();
             }
         });
         stressbutton.setOnClickListener(new View.OnClickListener() {
@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     {
         frombottom= AnimationUtils.loadAnimation(this,R.anim.frombottom);
         splashtext = (LinearLayout) findViewById(R.id.splashtext);
-       // hometext = (LinearLayout) findViewById(R.id.hometext);
+        // hometext = (LinearLayout) findViewById(R.id.hometext);
         firstmain = (LinearLayout) findViewById(R.id.firstmain);
         bgapp=(ImageView) findViewById(R.id.bgapp);
 
@@ -650,7 +650,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         else if(flag==2) {
             isE4View = true;
             E4fragment = (e4View) fragment;
-          }
+        }
         else if(flag==3)
         {
             isECGView = false;
@@ -786,12 +786,12 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 eda_list.clear();
                 temp_list.clear();
                 OffBLE();
-                 if (isActiveDisConnected) {
-                     myToast(getString(R.string.active_disconnected));
+                if (isActiveDisConnected) {
+                    myToast(getString(R.string.active_disconnected));
                 } else {
-                     myToast(getString(R.string.disconnected));
-                     ObserverManager.getInstance().notifyObserver(bleDevice);
-                     sendNotification(1,bleDevice.getName(),3);
+                    myToast(getString(R.string.disconnected));
+                    ObserverManager.getInstance().notifyObserver(bleDevice);
+                    sendNotification(1,bleDevice.getName(),3);
                 }
             }
         });
@@ -881,7 +881,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             isECGStart = true;
                             serviceClass.isECGStart = true;
                             currentMillis= System.currentTimeMillis();//첫시작의 시간을 저장
-                            myToast("ECG PATCH의 연결이 완료되었습니다.");
+                            myToast("ECG PATCH의 연결이 완료되었습니다." );
                             updateImage(ecgconnection,R.mipmap.connected);
                             updateLabel(bletitle,"연결할 ECG Patch를 선택해주세요");
                             setIsCalli(true);
@@ -899,7 +899,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                         {
                             currentMillis= System.currentTimeMillis();
                             connectionflag=false;
-                           // return;
+                            // return;
                         }
                         else
                         {
@@ -1356,7 +1356,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             ConnectedE4();
             if(isECGStart)
             {
-               // updateLabel(readytext,"센서연결이 완료되었습니다.");
+                // updateLabel(readytext,"센서연결이 완료되었습니다.");
 
             }
             // The device manager disconnected from a device
@@ -1420,7 +1420,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
     @Override
     public void didReceiveIBI(float ibi, double timestamp) {
-      //  updateLabel(ibiLabel, "" + ibi);
+        //  updateLabel(ibiLabel, "" + ibi);
     }
 
     @Override
@@ -1474,7 +1474,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     @Override
     public void didEstablishConnection() {
 
-     }
+    }
 
     @Override
     public void didUpdateOnWristStatus(@EmpaSensorStatus final int status) {
@@ -1502,7 +1502,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
             @Override
             public void run() {
-               if(!ecgswitch.isChecked()) ecgswitch.setChecked(true);
+                if(!ecgswitch.isChecked()) ecgswitch.setChecked(true);
                 bleDialog.show();
             }
         });
@@ -1528,42 +1528,42 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             @Override
             public void run() {
 
-            try {
-                bleDialog.dismiss();
-                progressDialog.dismiss();
+                try {
+                    bleDialog.dismiss();
+                    progressDialog.dismiss();
 
-                ecgconnection.setImageResource(R.mipmap.disconnected);
-                ecgswitch.setChecked(false);
-                //   updateLabel( readytext, "센서를 연결해주세요.");
-            }catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+                    ecgconnection.setImageResource(R.mipmap.disconnected);
+                    ecgswitch.setChecked(false);
+                    //   updateLabel( readytext, "센서를 연결해주세요.");
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
 
             }
         });
-       try {
-           connectionflag = false;
-           if (serviceClass != null) serviceClass.initialize();
-           if (mybleDevice != null) {
-               BleManager.getInstance().cancelScan();
-               if (BleManager.getInstance().isConnected(mybleDevice)) {
-                   BleManager.getInstance().disconnect(mybleDevice);
-                   mDeviceAdapter.removeDevice(mybleDevice);
-                   mDeviceAdapter.notifyDataSetChanged();
-               }
-               mDeviceAdapter.removeDevice(mybleDevice);
-               mDeviceAdapter.notifyDataSetChanged();
-               mybleDevice = null;
-           }
+        try {
+            connectionflag = false;
+            if (serviceClass != null) serviceClass.initialize();
+            if (mybleDevice != null) {
+                BleManager.getInstance().cancelScan();
+                if (BleManager.getInstance().isConnected(mybleDevice)) {
+                    BleManager.getInstance().disconnect(mybleDevice);
+                    mDeviceAdapter.removeDevice(mybleDevice);
+                    mDeviceAdapter.notifyDataSetChanged();
+                }
+                mDeviceAdapter.removeDevice(mybleDevice);
+                mDeviceAdapter.notifyDataSetChanged();
+                mybleDevice = null;
+            }
 
-           doneCali = false;
-           isECGStart = false;
-       }
-       catch (Exception e)
-       {
+            doneCali = false;
+            isECGStart = false;
+        }
+        catch (Exception e)
+        {
 
-       }
+        }
     }
     void OnE4()
     {
@@ -1593,29 +1593,29 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
             @Override
             public void run() {
-               try {
-                   e4_loading.clearAnimation();
-                   e4_loading.setVisibility(View.INVISIBLE);
+                try {
+                    e4_loading.clearAnimation();
+                    e4_loading.setVisibility(View.INVISIBLE);
 
-                   e4connected.setVisibility(View.INVISIBLE);
-                   E4statusLabel.setTextColor(getColor(R.color.colorGrayt));
-                   updateLabel(E4statusLabel, "기기를 켜주세요");
-                   img_blue.setImageResource(R.mipmap.ic_blue_remote);
-                   e4Dialog.dismiss();
-                   e4connection.setImageResource(R.mipmap.disconnected);
-                   if (e4switch.isChecked()) e4switch.setChecked(false);
-                   //  updateLabel( readytext, "센서를 연결해주세요.");
-               }catch (Exception e)
-               {
+                    e4connected.setVisibility(View.INVISIBLE);
+                    E4statusLabel.setTextColor(getColor(R.color.colorGrayt));
+                    updateLabel(E4statusLabel, "기기를 켜주세요");
+                    img_blue.setImageResource(R.mipmap.ic_blue_remote);
+                    e4Dialog.dismiss();
+                    e4connection.setImageResource(R.mipmap.disconnected);
+                    if (e4switch.isChecked()) e4switch.setChecked(false);
+                    //  updateLabel( readytext, "센서를 연결해주세요.");
+                }catch (Exception e)
+                {
 
-               }
+                }
 
             }
         });
         doneCali = false;
         state0= false;//또 혹시 모르니
         connectionflag=false;
-       if(serviceClass!=null) serviceClass.initialize();
+        if(serviceClass!=null) serviceClass.initialize();
 
     }
 
@@ -1642,17 +1642,17 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             @Override
             public void run() {
                 try{if(!e4switch.isChecked()) e4switch.setChecked(true);
-                if(e4_loading!=null) {
-                    e4_loading.clearAnimation();
-                    e4_loading.setVisibility(View.INVISIBLE);
-                    Toast.makeText(MainActivity.this, "E4 Band 연결이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                    if(e4_loading!=null) {
+                        e4_loading.clearAnimation();
+                        e4_loading.setVisibility(View.INVISIBLE);
+                        Toast.makeText(MainActivity.this, "E4 Band 연결이 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
-                }
-                e4Dialog.dismiss();
-                e4connection.setImageResource(R.mipmap.connected);
-                e4connected.setVisibility(View.VISIBLE);
-                E4statusLabel.setTextColor(getColor(R.color.myblue));
-                img_blue.setImageResource(R.mipmap.ic_blue_connected);
+                    }
+                    e4Dialog.dismiss();
+                    e4connection.setImageResource(R.mipmap.connected);
+                    e4connected.setVisibility(View.VISIBLE);
+                    E4statusLabel.setTextColor(getColor(R.color.myblue));
+                    img_blue.setImageResource(R.mipmap.ic_blue_connected);
                 } catch (Exception e){}
 
             }
