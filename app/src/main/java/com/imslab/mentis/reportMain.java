@@ -29,9 +29,8 @@ public class reportMain extends AppCompatActivity {
             }
         });
         mTabLayout = (TabLayout) findViewById(R.id.layout_tab);
-        mTabLayout.addTab(mTabLayout.newTab().setText("Pre"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Then"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Post"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Then-Test"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Post-Test"));
 
         mViewPager = (ViewPager) findViewById(R.id.pager_content);
         ReportAdapter mContentsPagerAdapter = new ReportAdapter(getSupportFragmentManager(), mTabLayout.getTabCount());

@@ -34,7 +34,7 @@
                 android:textSize="15sp"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:text="0= Never / 1= Almost Never / 2= Sometimes \n 3= Fairly Often / 4= Very Often"
+                android:text="0= Never | 1= Almost Never | 2= Sometimes \n 3= Fairly Often | 4= Very Often"
                 />
 
             <RelativeLayout

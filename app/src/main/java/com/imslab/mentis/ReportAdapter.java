@@ -28,18 +28,18 @@ public class ReportAdapter extends FragmentStatePagerAdapter {
 
             case 0:
 
-                SelfReport selfReport = new SelfReport();
-
-                return selfReport;
-
-
-            case 1:
+//                SelfReport selfReport = new SelfReport();
+//
+//                return selfReport;
+//
+//
+//            case 1:
 
                 ingReport selfReport2 = new ingReport();
 
                 return selfReport2;
 
-            case 2:
+            case 1:
 
                 postReport selfReport3 = new postReport();
 

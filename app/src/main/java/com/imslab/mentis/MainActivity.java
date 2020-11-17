@@ -881,7 +881,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             isECGStart = true;
                             serviceClass.isECGStart = true;
                             currentMillis= System.currentTimeMillis();//첫시작의 시간을 저장
-                            myToast("ECG PATCH의 연결이 완료되었습니다." );
+                            myToast("ECG PATCH의 연결이 완료되었습니다.");
                             updateImage(ecgconnection,R.mipmap.connected);
                             updateLabel(bletitle,"연결할 ECG Patch를 선택해주세요");
                             setIsCalli(true);

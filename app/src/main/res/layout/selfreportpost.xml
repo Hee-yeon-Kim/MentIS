@@ -34,7 +34,7 @@
                 android:textSize="15sp"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:text="0= Never / 1= Almost Never / 2= Sometimes \n 3= Fairly Often / 4= Very Often"
+                android:text="0= Strongly disagree | 1= Disagree \n2= Neither agress nor disagree \n3= Agree | 4= Strongly agree"
                 />
 
             <RelativeLayout
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Is the application easy and intuitive to use?"/>
+                    android:text="Was the application easy and intuitive to use?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup1"
@@ -135,7 +135,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Is the application present the information in a clear and concise way?"/>
+                    android:text="Did the application present the information in a clear and concise way?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup2"
@@ -220,7 +220,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Is the provided data reliable?"/>
+                    android:text="Was the provided data reliable?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup3"
@@ -304,7 +304,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Has this system helped you notice your stress status?"/>
+                    android:text="Did this system help you aware of your stress status?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup4"
