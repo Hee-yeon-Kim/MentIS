@@ -18,12 +18,15 @@ public class SetAlarm extends AppCompatActivity {
     private TimePicker timePicker;
     private AlarmManager alarmManager;
     private int hour, minute;
+    int id=2;
+    public static Context context_setAlarm; // context 변수 선언
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setalarm);
-
+        context_setAlarm = this;
         Button backbutton = (Button) findViewById(R.id.backbutton);
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,7 +43,7 @@ public class SetAlarm extends AppCompatActivity {
     public void regist(View view) {
 
         Intent intent = new Intent(this, Alarm.class);
-        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0,intent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(this, id++,intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

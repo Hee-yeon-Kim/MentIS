@@ -4,9 +4,11 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Person;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Icon;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.graphics.drawable.IconCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,6 +43,7 @@ public class ForegroundService extends Service {
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     public static final String CHANNEL_ID2 = "ForegroundServiceChannel2";
     public static final String CHANNEL_ID3 = "ConnectionErrorChannel2";
+    public static final String CHANNEL_ID4 = "HighStressChannel";
 
     public  List<String> time_list;
     public  List<String> data_list;
@@ -55,6 +59,8 @@ public class ForegroundService extends Service {
     public int userID=-1;
     public int userGender=0;
     public int userAge=0;
+    String checkedTime="";
+    int readcount=0;
 
     Connection con = null;
 
@@ -64,11 +70,10 @@ public class ForegroundService extends Service {
     public Handler sendHandler=null;
     Thread senddatathread = null;
 
-    Timer timer;
-    TimerTask TT;
+    Timer timer,stressCheckTimer;
+    TimerTask TT,stressCheckTask;
     NotificationManager notimanager;
-    PendingIntent pendingIntent, pendingIntent2;
-
+    PendingIntent pendingIntent, pendingIntent2,pendingIntent3;
     class MyBinder extends Binder {
         ForegroundService getService() { // 서비스 객체를 리턴
             return ForegroundService.this;
@@ -93,24 +98,21 @@ public class ForegroundService extends Service {
         senddatathread.start();
         notimanager = getSystemService(NotificationManager.class);
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, stressView.class);
+
         Intent notificationIntent2 = new Intent(this, reportMain.class);
 
+        Intent notificationIntent3 = new Intent(this, MiddleActivity.class);
+
         pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, 0);
+                0, notificationIntent, PendingIntent.FLAG_NO_CREATE);
         pendingIntent2 = PendingIntent.getActivity(this,
                 0, notificationIntent2, PendingIntent.FLAG_UPDATE_CURRENT
         );
+        pendingIntent3 = PendingIntent.getActivity(this,
+                0, notificationIntent3, PendingIntent.FLAG_UPDATE_CURRENT
+        );
 
-        //노티피케이션 하나 또 만들기
-        Notification notification2 = new NotificationCompat.Builder(this, CHANNEL_ID2)
-                .setContentTitle("**Please fill out the self report.**")
-               // .setContentText("**Please fill out the self report.**")
-                .setColor(getColor(R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent2)
-                .build();
-        notification2.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
 
 
         timer = new Timer();
@@ -119,7 +121,16 @@ public class ForegroundService extends Service {
             public void run() {
                 // 반복실행할 구문
                 try {
-                    notimanager.cancel(2);
+                    Notification notification2 = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID2)
+                            .setContentTitle("Please fill out the self report")
+                            .setContentText("Touch here to open the app.")
+                            .setColor(getColor(R.color.colorPrimary))
+                            .setSmallIcon(R.mipmap.ic_launcher_round)
+                            .setContentIntent(pendingIntent2)
+                            .setTimeoutAfter(1000*60*45)
+                            .build();
+                    notification2.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+
                     notimanager.notify(2, notification2);
                 }catch (Exception e)
                 {
@@ -130,25 +141,36 @@ public class ForegroundService extends Service {
 
         };
 
+        stressCheckTimer = new Timer();
+        stressCheckTask = new TimerTask() {
+            @Override
+            public void run() {
+                // 반복실행할 구문
+                StressCheckfromDB();
+            }
+
+        };
 
 
     }
+
     public void disconnectNotification(String str,int id)
     {
 
        try {
-           notimanager.cancel(id);
-           Notification notification3 = new NotificationCompat.Builder(this, CHANNEL_ID3)
+
+           Notification notification22 = new NotificationCompat.Builder(this, CHANNEL_ID3)
                    .setContentTitle(str + "is disconnected")
                    // .setContentText("자가 진단해주세요")
                    .setColor(getColor(R.color.colorPrimary))
-                   .setSmallIcon(R.drawable.ic_launcher_foreground)
-                   .setContentIntent(pendingIntent)
+                   .setSmallIcon(R.mipmap.ic_launcher_round)
+                   .setTimeoutAfter(1000*60*5)
                    .build();
 
-           notification3.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_INSISTENT | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+           notification22.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_INSISTENT | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
 
-           notimanager.notify(id, notification3);
+           notimanager.notify(id, notification22);
+
        }
        catch (Exception e)
        {
@@ -159,12 +181,11 @@ public class ForegroundService extends Service {
     {
 
         try {
-            notimanager.cancel(5);
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID3)
-                    .setContentTitle("Today's test has ended.")
-                    .setContentText("** Please fill out the post-self report**")
+                    .setContentTitle("Please fill out the post-self report")
+                    .setContentText("Touch here to enter the app.")
                     .setColor(getColor(R.color.colorPrimary))
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setContentIntent(pendingIntent2)
                     .build();
 
@@ -184,10 +205,9 @@ public class ForegroundService extends Service {
 
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("MentIS 실행 중...")
+                .setContentTitle("MentIS is running...")
               //  .setContentText(input)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .build();
 
         startForeground(1, notification);
@@ -196,8 +216,9 @@ public class ForegroundService extends Service {
 
         initialize();
 
-        timer.schedule(TT, 1000*60*60, 1000*60*60); //Timer 실행
-
+        timer.schedule(TT, 1000*60*60, 1000*60*60); //Timer 실행 설문지
+        stressCheckTimer.schedule(stressCheckTask, 1000*60*30, 1000*60*30); //30분마다 스트레스 체크 Timer 실행
+        readcount = 0;//read count 셋팅
         return mBinder;
     }
     public  void initialize() {
@@ -220,12 +241,14 @@ public class ForegroundService extends Service {
     {
 
         timer.cancel();
+        stressCheckTimer.cancel();
         data_list.clear();
         time_list.clear();
         answer_list.clear();
         isECGStart=false;
         state0=false;
         closeDB();
+        notimanager.cancelAll();
         return true;
     }
     class FeedbackThread extends Thread {
@@ -581,7 +604,6 @@ public class ForegroundService extends Service {
         return true;
     }
 
-
     public Boolean getRespfromDB()
     {
 
@@ -631,6 +653,85 @@ public class ForegroundService extends Service {
         return  true;
     }
 
+    public Boolean StressCheckfromDB() {
+
+        respondDB("아1");
+        if(userID==-1||!openDB) return false;
+        String frontdate="2020-09-24 17:04:44";
+        String backdate="2020-09-24 16:38:06";
+        respondDB("아2");
+
+        String sql = "SELECT * FROM " + "user_analysis" + " WHERE"
+                + " (user_id = "
+                + userID+") AND time >= str_to_date('"+frontdate+"', '%Y-%m-%d %T')"
+                + ";";
+        int Stresscount=0;
+        int Goodcount=0;
+        int Totalcount=0;
+        StringBuilder sb= new StringBuilder();
+
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next())
+            {
+                String date = rs.getString("time");
+                sb.append(date);
+                int latestStress=rs.getInt("Stress");
+                sb.append(" "+latestStress+" ");
+
+                if(latestStress==1) Stresscount++;
+                else if(latestStress==0) Goodcount++;
+
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            respondDB("아3");
+
+            return false;
+        }
+        Totalcount = Stresscount + Goodcount;
+        respondDB(sb.toString());
+
+        if(Totalcount>0)
+        {
+            if(Stresscount/Totalcount>2/3)
+            {
+                Notification notification3 = new NotificationCompat.Builder(this, CHANNEL_ID2)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setContentTitle("Your stress level is high")
+                        .setContentText("Touch here to do breathing exercises to relax.")
+                        .setColor(getColor(R.color.colorPrimary))
+                        .setContentIntent(pendingIntent3)//훈련창
+                        .setTimeoutAfter(1000*60*25)
+                        .build();
+                notification3.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+                //알림
+                notimanager.notify(200,notification3);
+
+            }else{
+
+                Notification notification32 = new NotificationCompat.Builder(this, CHANNEL_ID2)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setContentTitle("Check your stress now")
+                        .setContentText("Touch here to enter the app.")
+                        .setColor(getColor(R.color.colorPrimary))
+                        .setContentIntent(pendingIntent)//결과창
+                        .setTimeoutAfter(1000*60*25)
+                        .build();
+                notification32.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+
+
+                //알림
+                notimanager.notify(220,notification32);
+            }
+            return true;
+        }
+        else return false;
+
+
+    }
     public Boolean getDatafromDB()
     {
 
@@ -913,18 +1014,24 @@ public class ForegroundService extends Service {
             );
             NotificationChannel serviceChannel2 = new NotificationChannel(
                     CHANNEL_ID2,
-                    "Foreground Service Channel2",
+                    "Survey Notification",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationChannel serviceChannel3 = new NotificationChannel(
                     CHANNEL_ID3,
-                    "Foreground Service Channel3",
+                    "Disconnection Notification",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationChannel serviceChannel4 = new NotificationChannel(
+                    CHANNEL_ID4,
+                    "High Stress Notification",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
 
             notimanager.createNotificationChannel(serviceChannel);
             notimanager.createNotificationChannel(serviceChannel2);
             notimanager.createNotificationChannel(serviceChannel3);
+            notimanager.createNotificationChannel(serviceChannel4);
 
 
         }

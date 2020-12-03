@@ -14,7 +14,7 @@
     <!--            android:layout_width="match_parent"-->
     <!--            android:layout_height="wrap_content"-->
     <!--            android:text="가나다라"-->
-    <!--            />-->
+    <!--            />-->//
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                 android:textSize="15sp"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:text="0= Strongly disagree | 1= Disagree \n2= Neither agress nor disagree \n3= Agree | 4= Strongly agree"
+                android:text="Please rate following questions on a 5 point scale:\n 0=inadequate, 4=excellent"
                 />
 
             <RelativeLayout
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Was the application easy and intuitive to use?"/>
+                    android:text="Was it comfortable while wearing a wearable sensor?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup1"
@@ -135,7 +135,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Did the application present the information in a clear and concise way?"/>
+                    android:text="Was data visualization easy to understand?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup2"
@@ -202,7 +202,11 @@
                         android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />
-
+// 센서와의 블루투스 연결이 끊기지 않도록 핸드폰을 몸에 가까이 두세요.
+// ( 앱을 통해 직접 끊지 않았는 데 연결이 끊기는 경우, 알림이 울리게 됩니다.)
+//30분 마다 울리는 알림에 따라 모니터링 또는 호흡 트레이닝에 성실히 임해주세요.
+//1시간 마다 울리는 알림에 따라 Then-Test 코너의 질문지를 작성하고 제출하여 주ㅅ세요.
+//오후 6시, 측정이 끝나면 Post-Test 코너의 질문지를 작성해주세요.
                 </RadioGroup>
 
             </RelativeLayout>
@@ -220,7 +224,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Was the provided data reliable?"/>
+                    android:text="Did notification help you aware of your stress status?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup3"
@@ -304,7 +308,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Did this system help you aware of your stress status?"/>
+                    android:text="Did the breathing therapy provided by the app help relieve stress?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup4"
@@ -389,7 +393,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:text="Did AR-based breathing therapy help you manage stress?"/>
+                    android:text="Did augmented reality interface increase engagement to do breathing exercises?"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup5"
@@ -468,12 +472,13 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="60dp"
                 android:background="@drawable/rounded"
                 android:backgroundTint="@color/colorPrimary"
                 android:gravity="center"
                 android:text="제출하기"
-                android:textSize="17sp"/>
+                android:textSize="17sp"
+                />
         </LinearLayout>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

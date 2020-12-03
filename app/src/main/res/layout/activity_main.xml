@@ -9,39 +9,39 @@
     android:fontFamily="@font/nanumsquareeb"
     tools:context=".MainActivity">
 // splash 화면 디자인 시작
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/splashtext"
         android:elevation="6dp"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="250dp"
-        android:weightSum="8"
 
         >
 
         <TextView
+            android:id="@+id/mentis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="260dp"
             android:text="MentIS"
-            android:textColor="#fff"
-            android:textSize="34sp"
-            android:textStyle="bold"
             android:textAlignment="center"
+            android:textColor="#fff"
+            android:textSize="50sp"
+            android:textStyle="bold"
             android:fontFamily="@font/nanumsquareeb"
             />
         <TextView
-            android:layout_marginTop="15dp"
-            android:layout_width="wrap_content"
+            android:layout_below="@id/mentis"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
+            android:layout_marginTop="30dp"
             android:text="Mental Innovation Solution"
             android:textColor="#FFFFFF"
-            android:textSize="28sp"
+            android:textSize="24sp"
             android:textStyle="normal"
             android:fontFamily="@font/nanumsquareb"
 
@@ -50,6 +50,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="POSTECH IMS LAB"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="normal"
@@ -59,7 +61,7 @@
 
             />
 
-    </LinearLayout>
+    </RelativeLayout>
 //splash 화면 디자인 끝
 
 //배경 이미지 슬라이드 할 거
@@ -127,8 +129,7 @@
                     android:layout_toRightOf="@+id/profileicon"
                     android:layout_below="@id/main_title"
                     android:text="log in"
-                    android:textAlignment="center"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:textSize="16sp"
                     android:textColor="#FFFF"
                     android:fontFamily="@font/nanumsquarer"
@@ -171,10 +172,10 @@
 
                 <Button
                     android:id="@+id/goAlarm"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="5dp"
                     android:background="@mipmap/bell" />
 
             </RelativeLayout>

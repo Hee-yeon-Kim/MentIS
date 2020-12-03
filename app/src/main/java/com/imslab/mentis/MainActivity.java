@@ -20,6 +20,8 @@ import  com.imslab.mentis.ForegroundService.MyBinder;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
@@ -32,6 +34,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.util.Calendar;
 import android.location.LocationManager;
 import android.media.Image;
 import android.net.Uri;
@@ -99,7 +102,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     boolean isECGView = false;
     ecgView ECGfragment=null;
     e4View E4fragment=null;
-    boolean isPrereportdone = false;
     boolean isE4View = false;
     boolean isServer = false;
     int raw_ecg[] = new int[128];
@@ -110,7 +112,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
     ImageView bgapp,img_blue,dbicon,ecgconnection,e4connection;
     Switch ecgswitch, e4switch;
-    LinearLayout splashtext, firstmain;
+    LinearLayout  firstmain;
+    RelativeLayout splashtext;
     Animation frombottom;
     Button goUnity,calli,userSetting,ecgbutton,e4button,stressbutton,goAlarm;
     TextView e4connected,dbtext,usertext;
@@ -212,7 +215,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
                 final RadioGroup genderRadio = (RadioGroup) loginLayout.findViewById(R.id.LoginradioGroup);
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("계정 설정")
+                        .setTitle("Create an account/Sign in")
                         .setView(loginLayout)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override public void onClick(DialogInterface dialog, int which) {
@@ -228,7 +231,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                                 {
                                     e.printStackTrace();
                                     userAge=0;
-                                    Toast.makeText(MainActivity.this, "나이 입력 오류", Toast.LENGTH_SHORT).show();
+                                   // Toast.makeText(MainActivity.this, "Age", Toast.LENGTH_SHORT).show();
                                 }
                                 int rb4 = genderRadio.getCheckedRadioButtonId();
                                 int Gender=0;
@@ -264,7 +267,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                                 serviceClass.userAge=userAge;
                                 serviceClass.userGender=Gender;
                                 serviceClass.nameEvent();//name , id 매칭
-                                isPrereportdone=false;
 
                             }
                         }).show();
@@ -286,10 +288,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     {
                         myToast("먼저 서버연결을 확인해주세요");
                     }
-                    else if(!isPrereportdone)
-                    {
-                        myToast("먼저 Pre Self Report를 제출해주세요");
-                    }
+
                     checkPermissions();
                     OnBLE();
                 }
@@ -312,10 +311,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     else if(!isServer)
                     {
                         myToast("먼저 서버연결을 확인해주세요");
-                    }
-                    else if(!isPrereportdone)
-                    {
-                        myToast("먼저 Pre Self Report를 제출해주세요");
                     }
 
                     //e4 toggle on
@@ -455,15 +450,28 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
         bindService(intent,serviceConnection, Context.BIND_AUTO_CREATE);
 
-
+        //6시 알람
+        set6();
 
 
     }
+    public void set6(){
+        Intent intent = new Intent(this, Alarm.class);
+        PendingIntent pIntent = PendingIntent.getBroadcast(this, 1,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,18);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        AlarmManager alarmManager =(AlarmManager)getSystemService(Context.ALARM_SERVICE) ;
 
+        alarmManager.set(AlarmManager.RTC,calendar.getTimeInMillis(),pIntent);
+
+    }
     private void UImanager()
     {
         frombottom= AnimationUtils.loadAnimation(this,R.anim.frombottom);
-        splashtext = (LinearLayout) findViewById(R.id.splashtext);
+        splashtext = (RelativeLayout) findViewById(R.id.splashtext);
         // hometext = (LinearLayout) findViewById(R.id.hometext);
         firstmain = (LinearLayout) findViewById(R.id.firstmain);
         bgapp=(ImageView) findViewById(R.id.bgapp);
@@ -773,6 +781,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 mDeviceAdapter.setDevice(bleDevice);
                 setMtu(bleDevice,512);
                 mDeviceAdapter.notifyDataSetChanged();
+                sendNotification(0,"",3);
                 //Toast.makeText(MainActivity.this, "연결됨", Toast.LENGTH_LONG).show();
             }
 
@@ -1352,6 +1361,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             state0= true;
 
             updateLabel(E4statusLabel, devicename);
+            sendNotification(0,"",4);
 
             ConnectedE4();
             if(isECGStart)
