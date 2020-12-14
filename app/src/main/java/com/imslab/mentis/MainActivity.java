@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     ImageView bgapp,img_blue,dbicon,ecgconnection,e4connection;
     Switch ecgswitch, e4switch;
     LinearLayout  firstmain;
-    RelativeLayout splashtext;
+    RelativeLayout splashtexct;
     Animation frombottom;
     Button goUnity,calli,userSetting,ecgbutton,e4button,stressbutton,goAlarm;
     TextView e4connected,dbtext,usertext;
