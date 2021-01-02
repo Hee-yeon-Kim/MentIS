@@ -445,16 +445,20 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
     }
     public void set6(){
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour>=18) return;
+        
         Intent intent = new Intent(this, Alarm.class);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 1,intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Calendar calendar = Calendar.getInstance();
+
         calendar.set(Calendar.HOUR_OF_DAY,18);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         AlarmManager alarmManager =(AlarmManager)getSystemService(Context.ALARM_SERVICE) ;
 
-        alarmManager.set(AlarmManager.RTC,calendar.getTimeInMillis(),pIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
 
     }
     private void UImanager()

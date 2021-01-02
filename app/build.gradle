@@ -48,7 +48,8 @@ repositories {
 }
 dependencies {
     implementation project(':FastBleLib')
-    implementation project(':unityLibrary2')
+    implementation project(':unityLibrary')
+
     api group: 'uk.me.berndporr', name:'iirj', version: '1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.4.1'

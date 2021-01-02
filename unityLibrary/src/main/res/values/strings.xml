@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources>
+
+    <string name="app_name">MentLS</string>
+
+    <string name="game_view_content_description">Game view</string>
+
+</resources>
