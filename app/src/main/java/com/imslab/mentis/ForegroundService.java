@@ -17,7 +17,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.IconCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,6 +34,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -81,12 +84,13 @@ public class ForegroundService extends Service {
     }
 
 
-
+    static ForegroundService foregroundService;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        foregroundService = this;
         answer_list = new ArrayList<>();
         data_list= new ArrayList<>();
         time_list = new ArrayList<>();
@@ -113,7 +117,7 @@ public class ForegroundService extends Service {
                 0, notificationIntent3, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-
+//(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         timer = new Timer();
         TT = new TimerTask() {
@@ -273,10 +277,18 @@ public class ForegroundService extends Service {
         @Override
         public  void run()
         {
-            if(!getDatafromDB())
+            Bundle bundle = getDatafromDB();
+            if(bundle==null)
             {
-                respondDB(  "데이터 베이스 write to monitoring table 가 거부되었습니다.");
+               // respondDB(  "데이터 베이스 write to monitoring table 가 거부되었습니다.");
                 openDB=false;
+            }
+            else
+            {
+                Intent intent = new Intent("DBDATA");
+                intent.putExtras(bundle);
+                LocalBroadcastManager.getInstance(ForegroundService.this).sendBroadcast(intent);
+
             }
 
         }
@@ -406,12 +418,18 @@ public class ForegroundService extends Service {
         th2.setDaemon(true);//앱이 종료되면 쓰레드 종료-이건 쓰레드 실행되기 전에 설정되어야하니까/
         th2.start() ;
     }
-    public void dataEvent()
+    public boolean dataEvent()
     {
+        if(userID==-1||!connectDB())
+        {
+           respondDB( "MentIS - 서버 연결 및 로그인을 확인해주세요.");
+           return false;
+        }
         NewRunnable3 nr3 = new NewRunnable3() ;
         Thread th3 = new Thread(nr3) ;
         th3.setDaemon(true);
         th3.start() ;
+        return true;
     }
 
     public void feedbackdataEvent(boolean flag)
@@ -655,44 +673,65 @@ public class ForegroundService extends Service {
 
     public Boolean StressCheckfromDB() {
 
-        respondDB("아1");
-        if(userID==-1||!openDB) return false;
-        String frontdate="2020-09-24 17:04:44";
-        String backdate="2020-09-24 16:38:06";
-        respondDB("아2");
-
+//        respondDB("아1");
+//        if(userID==-1||!openDB) return false;
+//        String frontdate="2020-09-24 17:04:44";
+//        String backdate="2020-09-24 16:38:06";
+//        respondDB("아2");
+//
+//        String sql = "SELECT * FROM " + "user_analysis" + " WHERE"
+//                + " (user_id = "
+//                + userID+") AND time >= str_to_date('"+frontdate+"', '%Y-%m-%d %T')"
+//                + ";";
         String sql = "SELECT * FROM " + "user_analysis" + " WHERE"
-                + " (user_id = "
-                + userID+") AND time >= str_to_date('"+frontdate+"', '%Y-%m-%d %T')"
-                + ";";
+                +" user_id = "
+                +userID
+                +";";
+
         int Stresscount=0;
         int Goodcount=0;
         int Totalcount=0;
-        StringBuilder sb= new StringBuilder();
 
+         //
+        int starttime = 0, endtime=0;
+        Date date = new Date();
+        SimpleDateFormat sdformat = new SimpleDateFormat("yyyyMMddHHmmss");
+        starttime=Integer.parseInt(sdformat.format(date));
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date); // 30분 더하기
+        cal.add(Calendar.MINUTE, -30);
+        endtime=Integer.parseInt(sdformat.format(cal.getTime()));
+
+
+        //
         try {
             ResultSet rs = st.executeQuery(sql);
             while(rs.next())
             {
-                String date = rs.getString("time");
-                sb.append(date);
-                int latestStress=rs.getInt("Stress");
-                sb.append(" "+latestStress+" ");
+                String str = rs.getString("time");
+                str = str.replace("-", "");
+                str = str.replace(":", "");
+                str = str.replace(" ", "");
+                int tmp = Integer.parseInt(str);
+                if(tmp>starttime && tmp<=endtime)
+                {
+                    int latestStress=rs.getInt("Stress");
 
-                if(latestStress==1) Stresscount++;
-                else if(latestStress==0) Goodcount++;
+                    if(latestStress==1) Stresscount++;
+                    else if(latestStress==0) Goodcount++;
+                }
 
             }
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            respondDB("아3");
+            respondDB("데이터베이스 읽기 오류_3");
 
             return false;
         }
         Totalcount = Stresscount + Goodcount;
-        respondDB(sb.toString());
 
         if(Totalcount>0)
         {
@@ -732,7 +771,7 @@ public class ForegroundService extends Service {
 
 
     }
-    public Boolean getDatafromDB()
+    public Bundle getDatafromDB()
     {
 
 
@@ -771,31 +810,34 @@ public class ForegroundService extends Service {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return  false;
+            respondDB( "데이터베이스 읽어들이기 실패");//측정 데이터가 부족합니다.
+            return  null;
+        }
+
+        Bundle bundle = new Bundle();
+
+        if(DateTime_list.size()>0) {
+
+            bundle.putStringArrayList("TIME", DateTime_list);
+            bundle.putIntegerArrayList("ECG_SQA", ecg_sqa_list);
+            bundle.putIntegerArrayList("PPG_SQA", ppg_sqa_list);
+            bundle.putIntegerArrayList("HRmean", HRmean_list);
+            bundle.putIntegerArrayList("STmean", STmean_list);
+            bundle.putIntegerArrayList("RESP", RESP_list);
+            bundle.putIntegerArrayList("Stress", Stress_list);
+
+           // ((MainActivity) MainActivity.context_main).startStressView(bundle,true);
+        }
+        else {
+            respondDB( "측정 데이터가 더 필요합니다.");//측정 데이터가 부족합니다.
+            return null;
+           // ((MainActivity) MainActivity.context_main).startStressView(null,false);
         }
 
 
-            if(DateTime_list.size()>0) {
-
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("TIME", DateTime_list);
-                bundle.putIntegerArrayList("ECG_SQA", ecg_sqa_list);
-                bundle.putIntegerArrayList("PPG_SQA", ppg_sqa_list);
-                bundle.putIntegerArrayList("HRmean", HRmean_list);
-                bundle.putIntegerArrayList("STmean", STmean_list);
-                bundle.putIntegerArrayList("RESP", RESP_list);
-                bundle.putIntegerArrayList("Stress", Stress_list);
-
-                ((MainActivity) MainActivity.context_main).startStressView(bundle,true);
-            }
-            else {
-                respondDB( "측정 데이터가 더 필요합니다.");//측정 데이터가 부족합니다.
-                ((MainActivity) MainActivity.context_main).startStressView(null,false);
-            }
-
-
-        return  true;
+        return bundle;
     }
+
     public Boolean closeDB()
     {
 

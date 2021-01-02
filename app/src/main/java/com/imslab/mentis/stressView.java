@@ -1,8 +1,15 @@
 package com.imslab.mentis;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -43,11 +50,33 @@ public class stressView extends AppCompatActivity {
     BarChart STRESSChart;
     Button backbutton;
     ValueFormatter formatter;
+    Bundle DBData;
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           Bundle bundle =  intent.getExtras();
+           if(bundle==null)
+           {
+               ch_text.setText("데이터를 받아오지 못하였습니다. 나중에 다시 시도해주세요.");
+              // finish();
+
+           }
+           else
+           {
+               DBData = bundle;
+               settingdata();
+
+           }
+            // intent ..
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stressview);
+
 
         HRChart= (LineChart) findViewById(R.id.meanHRChart);
         STChart= (LineChart) findViewById(R.id.meanSTChart);
@@ -64,6 +93,12 @@ public class stressView extends AppCompatActivity {
             }
         });
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("DBDATA"));
+        if(!((ForegroundService) ForegroundService.foregroundService).dataEvent()) {
+            ch_text.setText("데이터를 받아오지 못하였습니다. 나중에 다시 시도해주세요.");
+           // finish();
+        }
 //        ecg_sqa_list=new ArrayList<>();
 //        ppg_sqa_list=new ArrayList<>();
 //        HRmean_list=new ArrayList<>();
@@ -72,13 +107,29 @@ public class stressView extends AppCompatActivity {
 //        Stress_list=new ArrayList<>();
 //        DateTime_list=new ArrayList<>();
 
-       settingdata();
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(ch_text!=null){
+        if (!((ForegroundService) ForegroundService.foregroundService).dataEvent()) {
+            ch_text.setText("데이터를 받아오지 못하였습니다. 나중에 다시 시도해주세요.");
+            // finish();
+            }
+        }
+
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+    }
+    
     private void settingdata()
     {
-        Intent intent = getIntent(); /*데이터 수신*/
         ArrayList<Integer> ecg_sqa_list=null;
         ArrayList<Integer> ppg_sqa_list=null;
         ArrayList<Integer> HRmean_list=null;
@@ -90,14 +141,14 @@ public class stressView extends AppCompatActivity {
         ArrayList<Entry> STentries = new ArrayList<>();
         List<BarEntry> Stressentries = new ArrayList<>();
         try{
-            if(intent.getExtras().getStringArrayList("TIME")!=null)
-                DateTime_list = intent.getExtras().getStringArrayList("TIME");
-                ecg_sqa_list = intent.getExtras().getIntegerArrayList("ECG_SQA");
-                ppg_sqa_list= intent.getExtras().getIntegerArrayList("PPG_SQA");
-                HRmean_list =  intent.getExtras().getIntegerArrayList("HRmean");
-                STmean_list =  intent.getExtras().getIntegerArrayList("STmean");
-                RESP_list =  intent.getExtras().getIntegerArrayList("RESP");
-                Stress_list= intent.getExtras().getIntegerArrayList("Stress");
+            if(DBData.getStringArrayList("TIME")!=null)
+                DateTime_list = DBData.getStringArrayList("TIME");
+                ecg_sqa_list = DBData.getIntegerArrayList("ECG_SQA");
+                ppg_sqa_list= DBData.getIntegerArrayList("PPG_SQA");
+                HRmean_list =  DBData.getIntegerArrayList("HRmean");
+                STmean_list =  DBData.getIntegerArrayList("STmean");
+                RESP_list =  DBData.getIntegerArrayList("RESP");
+                Stress_list= DBData.getIntegerArrayList("Stress");
 
 
 

@@ -59,8 +59,7 @@
             android:id="@+id/character_capture"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-             android:src="@mipmap/ch_happy"
-
+            android:src="@mipmap/lodingcircle"
             android:scaleType="fitCenter"
 
             />
@@ -69,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:layout_below="@+id/character_capture"
-            android:text="My stress level now : Low"
+            android:text="로딩 중입니다."
             android:gravity="center"
             android:layout_marginLeft="15sp"
             android:textSize="18sp"

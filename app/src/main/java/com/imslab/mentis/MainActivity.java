@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     ImageView bgapp,img_blue,dbicon,ecgconnection,e4connection;
     Switch ecgswitch, e4switch;
     LinearLayout  firstmain;
-    RelativeLayout splashtexct;
+    RelativeLayout splashtext;
     Animation frombottom;
     Button goUnity,calli,userSetting,ecgbutton,e4button,stressbutton,goAlarm;
     TextView e4connected,dbtext,usertext;
@@ -370,20 +370,9 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         stressbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), stressView.class);
 
-                if(isServer && isLogin)
-                {
-                    progressDialog.setMessage("데이터 로딩 중...");
-                    progressDialog.show();
-                    serviceClass.dataEvent();//데이터 받아오는 이벤트 실행 - ForeGround 서비스에서 동작-그 후 서비스에서 액티비티 실행시킴
-                }
-                else
-                {
-
-                    if(!isServer) myToast("서버 연결이 되지 않았습니다.");
-                    else myToast("로그인 해주세요.");
-                }
-
+                startActivity(intent);
             }
         });
         e4button.setOnClickListener(new View.OnClickListener() {
@@ -594,24 +583,24 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 //    }
 
     //stress view 액티비티 트리거 리시버 form ForegroundService
-    public  void startStressView(Bundle bundle,boolean flag)
-    {
-        if(flag) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    progressDialog.dismiss();
-                    Intent intent = new Intent(getApplicationContext(), stressView.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-        }
-        else
-        {
-            progressDialog.dismiss();
-        }
-    }
+//    public  void startStressView(Bundle bundle,boolean flag)
+//    {
+//        if(flag) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    progressDialog.dismiss();
+//                    Intent intent = new Intent(getApplicationContext(), stressView.class);
+//                    intent.putExtras(bundle);
+//                    startActivity(intent);
+//                }
+//            });
+//        }
+//        else
+//        {
+//            progressDialog.dismiss();
+//        }
+//    }
     public  void startCaliView()
     {
         runOnUiThread(new Runnable() {
