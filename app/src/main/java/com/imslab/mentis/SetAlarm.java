@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -18,6 +20,8 @@ public class SetAlarm extends AppCompatActivity {
     private TimePicker timePicker;
     private AlarmManager alarmManager;
     private int hour, minute;
+    SeekBar seekBar;
+    TextView textView;
     int id=2;
     public static Context context_setAlarm; // context 변수 선언
 
@@ -28,10 +32,40 @@ public class SetAlarm extends AppCompatActivity {
         setContentView(R.layout.setalarm);
         context_setAlarm = this;
         Button backbutton = (Button) findViewById(R.id.backbutton);
+        seekBar = findViewById(R.id.seekBar);
+        textView = findViewById(R.id.seekBarText);
+        int old=(int)((ForegroundService) ForegroundService.foregroundService).userThres*100;
+        textView.setText(String.valueOf(old)+"%");
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                //윈도우 밝기 값 10% ~ 100% 사이로 제한
+                if(progress < 10){
+                    progress = 10;
+                }else if(progress>100){
+                    progress = 100;
+                }
+                textView.setText(String.valueOf(progress)+"%");
+                ((ForegroundService) ForegroundService.foregroundService).userThres=progress/100f;
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 

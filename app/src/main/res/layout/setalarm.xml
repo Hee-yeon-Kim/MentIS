@@ -90,5 +90,41 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button"
         app:layout_constraintTop_toBottomOf="@+id/tp_timepicker" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="5dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Stress Sensitivity"
+            android:gravity="center"
+            android:layout_weight="2"
+            />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:min="10"
+            android:max="100"
+            android:layout_weight="7"
+            />
+        <TextView
+            android:id="@+id/seekBarText"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_weight="1"
+            android:text="0.5"
+            android:gravity="center"
+
+            />
+    </LinearLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>

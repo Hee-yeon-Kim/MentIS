@@ -333,16 +333,16 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         goUnity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(true)//isServer && isLogin)
-                {
-                    //serviceClass.feedbackdataEvent(true);
+//                if(isServer && isLogin)
+//                {
+//                    //serviceClass.feedbackdataEvent(true);
                     Intent intent = new Intent(MainActivity.this, MiddleActivity.class);
                     startActivity(intent);
-                }
+               // }
 //                else
 //                {
                 if(!isServer) myToast("서버 연결이 되지 않았습니다.");
-                else myToast("로그인 해주세요.");
+                if(!isLogin) myToast("로그인 해주세요.");
 //                }
             }
         });

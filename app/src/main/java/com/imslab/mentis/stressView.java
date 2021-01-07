@@ -58,7 +58,7 @@ public class stressView extends AppCompatActivity {
            Bundle bundle =  intent.getExtras();
            if(bundle==null)
            {
-               ch_text.setText("데이터를 받아오지 못하였습니다. 나중에 다시 시도해주세요.");
+               ch_text.setText("데이터를 받아오지 못하였습니다.\n나중에 다시 시도해주세요.");
               // finish();
 
            }
@@ -96,7 +96,7 @@ public class stressView extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
                 new IntentFilter("DBDATA"));
         if(!((ForegroundService) ForegroundService.foregroundService).dataEvent()) {
-            ch_text.setText("데이터를 받아오지 못하였습니다. 나중에 다시 시도해주세요.");
+            ch_text.setText("데이터를 받아오지 못하였습니다.\n나중에 다시 시도해주세요.");
            // finish();
         }
 //        ecg_sqa_list=new ArrayList<>();
@@ -114,7 +114,7 @@ public class stressView extends AppCompatActivity {
         super.onResume();
         if(ch_text!=null){
         if (!((ForegroundService) ForegroundService.foregroundService).dataEvent()) {
-            ch_text.setText("데이터를 받아오지 못하였습니다. 나중에 다시 시도해주세요.");
+            ch_text.setText("데이터를 받아오지 못하였습니다.\n나중에 다시 시도해주세요.");
             // finish();
             }
         }

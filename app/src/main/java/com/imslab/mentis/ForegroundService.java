@@ -62,6 +62,7 @@ public class ForegroundService extends Service {
     public int userID=-1;
     public int userGender=0;
     public int userAge=0;
+    public float userThres=7/10f;
     String checkedTime="";
     int readcount=0;
 
@@ -109,7 +110,7 @@ public class ForegroundService extends Service {
         Intent notificationIntent3 = new Intent(this, MiddleActivity.class);
 
         pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, PendingIntent.FLAG_NO_CREATE);
+                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         pendingIntent2 = PendingIntent.getActivity(this,
                 0, notificationIntent2, PendingIntent.FLAG_UPDATE_CURRENT
         );
@@ -420,7 +421,7 @@ public class ForegroundService extends Service {
     }
     public boolean dataEvent()
     {
-        if(userID==-1||!connectDB())
+        if(userID<0||!openDB)
         {
            respondDB( "MentIS - 서버 연결 및 로그인을 확인해주세요.");
            return false;
@@ -693,16 +694,19 @@ public class ForegroundService extends Service {
         int Totalcount=0;
 
          //
-        int starttime = 0, endtime=0;
+        long starttime = 0, endtime=0;
         Date date = new Date();
         SimpleDateFormat sdformat = new SimpleDateFormat("yyyyMMddHHmmss");
-        starttime=Integer.parseInt(sdformat.format(date));
+        starttime=Long.parseLong(sdformat.format(date));
+        Log.d("check",String.valueOf(starttime));
+       // starttime=20200924164506L;
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(date); // 30분 더하기
+        cal.setTime(date); // 30분 빼기
         cal.add(Calendar.MINUTE, -30);
-        endtime=Integer.parseInt(sdformat.format(cal.getTime()));
-
+        endtime=Long.parseLong(sdformat.format(cal.getTime()));
+        Log.d("check",String.valueOf(endtime));
+       // endtime=20200924161506L;
 
         //
         try {
@@ -713,8 +717,9 @@ public class ForegroundService extends Service {
                 str = str.replace("-", "");
                 str = str.replace(":", "");
                 str = str.replace(" ", "");
-                int tmp = Integer.parseInt(str);
-                if(tmp>starttime && tmp<=endtime)
+                double tmp =Double.parseDouble(str);
+               // Log.d("check","볼것"+String.valueOf(tmp)+"스타트"+String.valueOf(starttime)+"끝 "+String.valueOf(endtime));
+                if(tmp<=starttime && tmp>=endtime)
                 {
                     int latestStress=rs.getInt("Stress");
 
@@ -731,11 +736,12 @@ public class ForegroundService extends Service {
 
             return false;
         }
+      //  respondDB("스: "+String.valueOf(Stresscount)+"굿: "+String.valueOf(Goodcount));
         Totalcount = Stresscount + Goodcount;
 
         if(Totalcount>0)
         {
-            if(Stresscount/Totalcount>2/3)
+            if(Stresscount/Totalcount>userThres)
             {
                 Notification notification3 = new NotificationCompat.Builder(this, CHANNEL_ID2)
                         .setSmallIcon(R.mipmap.ic_launcher_round)
@@ -870,6 +876,7 @@ public class ForegroundService extends Service {
         } catch (Exception e) {
 
             e.printStackTrace();
+            respondDB("db연동에러_1");
             return  false;//"error1";
 
 
@@ -884,6 +891,7 @@ public class ForegroundService extends Service {
 
         } catch (Exception e) {
             e.printStackTrace();
+            respondDB("db연동에러_2");
             return false;//"데이터베이스 연동이 되지 않습니다.(errorcode:1)";
         }
         return  true;
