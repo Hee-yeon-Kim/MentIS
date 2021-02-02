@@ -280,13 +280,16 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             public void onClick(View v) {
                 if(ecgswitch.isChecked())
                 {
-                    if(!isLogin)
-                    {
-                        myToast("먼저 로그인 해주세요");
-                    }
-                    else if(!isServer)
+
+                    if(!isServer)
                     {
                         myToast("먼저 서버연결을 확인해주세요");
+                        ecgswitch.setChecked(false);
+                        return;
+                    } else if(!isLogin) {
+                        myToast("먼저 로그인 해주세요");
+                        ecgswitch.setChecked(false);
+                        return;
                     }
 
                     checkPermissions();
@@ -304,13 +307,16 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             public void onClick(View v) {
                 if(e4switch.isChecked())
                 {
-                    if(!isLogin)
-                    {
-                        myToast("먼저 로그인 해주세요");
-                    }
-                    else if(!isServer)
+                    if(!isServer)
                     {
                         myToast("먼저 서버연결을 확인해주세요");
+                        e4switch.setChecked(false);
+
+                        return;
+                    } else if(!isLogin) {
+                        myToast("먼저 로그인 해주세요");
+                        e4switch.setChecked(false);
+                        return;
                     }
 
                     //e4 toggle on
@@ -432,12 +438,17 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
     }
 
-    public void StartUnityFeedback() {
-      // 테스트주석 if(isServer && isLogin&&doneCali)
-        serviceClass.feedbackdataEvent(true);
-        if(!isServer) myToast("서버 연결이 되지 않았습니다.");
-        if(!isLogin) myToast("로그인 해주세요.");
-        if(!doneCali) myToast("Calibration 해주세요.");
+    public boolean StartUnityFeedback() {
+        if(isServer && isLogin&&doneCali) {
+            serviceClass.feedbackdataEvent(true);
+            return true;
+        }
+        else {
+            if (!isServer) myToast("서버 연결이 되지 않았습니다.");
+            if (!isLogin) myToast("로그인 해주세요.");
+            if (!doneCali) myToast("Calibration 해주세요.");
+            return false;
+        }
     }
 
     public void set6(){
