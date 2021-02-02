@@ -6,6 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Person;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Icon;
@@ -50,26 +52,24 @@ public class ForegroundService extends Service {
 
     public  List<String> time_list;
     public  List<String> data_list;
+    public  List<Integer> cali_list;
+
     public List<Answer> answer_list;
 
     public String user_name="no_name";
     public String user_pw="";
-    public boolean isECGStart=false;
     public boolean isFeedback=false;
-    public boolean state0=false;
-    public  int isCalli = 0;
+
     public boolean openDB = false;
     public int userID=-1;
     public int userGender=0;
     public int userAge=0;
-    public float userThres=7/10f;
-    String checkedTime="";
+    public float userThres=1/2f;
     int readcount=0;
 
     Connection con = null;
 
     Statement st = null;
-
     IBinder mBinder = new MyBinder();
     public Handler sendHandler=null;
     Thread senddatathread = null;
@@ -95,7 +95,8 @@ public class ForegroundService extends Service {
         answer_list = new ArrayList<>();
         data_list= new ArrayList<>();
         time_list = new ArrayList<>();
-        isCalli = 0;
+        cali_list = new ArrayList<>();
+
         openDB = false;
 
         senddatathread = new sendDataThread();
@@ -224,15 +225,15 @@ public class ForegroundService extends Service {
         timer.schedule(TT, 1000*60*60, 1000*60*60); //Timer 실행 설문지
         stressCheckTimer.schedule(stressCheckTask, 1000*60*30, 1000*60*30); //30분마다 스트레스 체크 Timer 실행
         readcount = 0;//read count 셋팅
+
         return mBinder;
     }
     public  void initialize() {
         try {
             data_list.clear();
             time_list.clear();
-
+            cali_list.clear();
             answer_list.clear();
-            isCalli = 0;
          //   openDB = false;
 
 
@@ -248,10 +249,9 @@ public class ForegroundService extends Service {
         timer.cancel();
         stressCheckTimer.cancel();
         data_list.clear();
+        cali_list.clear();
         time_list.clear();
         answer_list.clear();
-        isECGStart=false;
-        state0=false;
         closeDB();
         notimanager.cancelAll();
         return true;
@@ -262,6 +262,7 @@ public class ForegroundService extends Service {
             while(isFeedback)
             {
                 getRespfromDB();//10초마다
+
                 try{
                     Thread.sleep(10000);
                 }
@@ -346,6 +347,7 @@ public class ForegroundService extends Service {
                 @Override
                 public void handleMessage(Message msg)
                 {
+                    super.handleMessage(msg);
                     if(openDB)
                     {
                         //받은 메시지 db로 보내기
@@ -354,9 +356,11 @@ public class ForegroundService extends Service {
                             if (bundle.getBoolean("Flag")) {//그냥 데이터 제출
                                 String _time = bundle.getString("DATATIME");
                                 String _data = bundle.getString("FULLDATA");
-
+                                int _cali = bundle.getInt("CALI");
                                 time_list.add(_time);
                                 data_list.add(_data);
+                                cali_list.add(_cali);
+
                             }
                             else//응답데이터 제출
                             {
@@ -366,19 +370,22 @@ public class ForegroundService extends Service {
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            Log.d("CUSTOMERROR","서비스핸들러 받기오류");
+                            Log.d("HEEE","서비스핸들러 받기오류");
                         }
 
                         int willsend = time_list.size();//애초에 둘다 연결될때 이 리스트가 채워지니깐
+                        Log.d("HEEE",String.valueOf(time_list.size()));
                         if(willsend>30)//30초 단위로 보냄
                         {
                             for (int i = 0; i < willsend; i++) {
+
                                 if (!connectionJDBCTest(1,null)) {
                                     ((MainActivity) MainActivity.context_main).changeDBicon(false);
                                     openDB=false;
                                     break;
                                 }
                             }
+
                         }
                     }
 
@@ -389,6 +396,7 @@ public class ForegroundService extends Service {
                             for(int i=0; i<900;i++) {
                                 time_list.remove(0);
                                 data_list.remove(0);
+                                cali_list.remove(0);
                             }
                             Log.d("CUSTOMERROR","과부하");//오류 띄우기
                         }
@@ -403,6 +411,7 @@ public class ForegroundService extends Service {
                             {
                                 data_list.clear();
                                 time_list.clear();
+                                cali_list.clear();
                             }
                         }
                     }
@@ -437,16 +446,23 @@ public class ForegroundService extends Service {
     {
         if(flag){
             isFeedback=true;
-            FeedbackThread th3 = new FeedbackThread() ;
-            isCalli = 2;
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("com.ims.mentis.feedbackend");
+            registerReceiver(UnitybroadcastReceiver,filter);
+
+            ((MainActivity)MainActivity.context_main).CaliFlag=2;//캘리브레이션 모드 2로
+            FeedbackThread th3 = new FeedbackThread();
             th3.setDaemon(true);
             th3.start() ;
+            Log.d("HEEE","Start FeedBack Mode");
         }
         else
         {
             isFeedback=false;
-            isCalli=1;
+            ((MainActivity)MainActivity.context_main).CaliFlag=0;
+            Log.d("HEEE","Stop FeedBack Mode");
 
+            unregisterReceiver(UnitybroadcastReceiver);
         }
     }
 
@@ -624,7 +640,6 @@ public class ForegroundService extends Service {
 
     public Boolean getRespfromDB() {
 
-
         String sql = "SELECT * FROM " + "user_feedback" + " WHERE"
                 + " user_id = "
                 + userID;
@@ -675,54 +690,46 @@ public class ForegroundService extends Service {
             extras.putInt("Score", score);
             sendIntent.putExtra("FeedbackBundle", extras);
             sendBroadcast(sendIntent);
-            respondDB("점수 보냄 성공");
+            Log.d("HEEE","점수 보냄 성공 점수: "+String.valueOf(score));
         } else {
-            respondDB("점수 산출 시도");
+            Log.d("HEEE","점수 산출 실패");
         }
         return  true;
     }
 
-    public int getCalliResultfromDB()
-    {
-
-
-        String sql = "SELECT * FROM " + "user_callibration" + " WHERE"
-                +" user_id = "
-                +userID
-                ;
-        int count=0;
-
-        try {
-            ResultSet rs = st.executeQuery(sql);
-
-            while(rs.next()){
-                count++;
-
-            }
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return 0;
+    BroadcastReceiver UnitybroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            feedbackdataEvent(false);
         }
-
-
-
-
-        return count;
-    }
+    };
+//    public int getCalliResultfromDB()
+//    {
+//
+//
+//        String sql = "SELECT * FROM " + "user_callibration" + " WHERE"
+//                +" user_id = "
+//                +userID
+//                ;
+//        int count=0;
+//
+//        try {
+//            ResultSet rs = st.executeQuery(sql);
+//
+//            while(rs.next()){
+//                count++;
+//
+//            }
+//        } catch (SQLException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//            return 0;
+//        }
+//           return count;
+//    }
 
     public Boolean StressCheckfromDB() {
 
-//        respondDB("아1");
-//        if(userID==-1||!openDB) return false;
-//        String frontdate="2020-09-24 17:04:44";
-//        String backdate="2020-09-24 16:38:06";
-//        respondDB("아2");
-//
-//        String sql = "SELECT * FROM " + "user_analysis" + " WHERE"
-//                + " (user_id = "
-//                + userID+") AND time >= str_to_date('"+frontdate+"', '%Y-%m-%d %T')"
-//                + ";";
         String sql = "SELECT * FROM " + "user_analysis" + " WHERE"
                 +" user_id = "
                 +userID
@@ -771,17 +778,22 @@ public class ForegroundService extends Service {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            Log.d("HEEE","데이터베이스 읽기 오류_3");
             respondDB("데이터베이스 읽기 오류_3");
 
             return false;
         }
       //  respondDB("스: "+String.valueOf(Stresscount)+"굿: "+String.valueOf(Goodcount));
         Totalcount = Stresscount + Goodcount;
+        Log.d("HEEE","시작 "+String.valueOf(starttime)+"끝 "+String.valueOf(endtime)+" 카운트 "+String.valueOf(Stresscount)+" "+String.valueOf(Goodcount)+" "+String.valueOf(Stresscount/Totalcount)+" ");
+        float value = (float) Stresscount/(float) Totalcount;
+        Log.d("HEEE","시작2 "+String.valueOf(starttime)+"끝 "+String.valueOf(starttime)+" 카운트 "+String.valueOf(Stresscount)+" "+String.valueOf(Goodcount)+" "+String.valueOf(value)+" ");
 
         if(Totalcount>0)
         {
-            if(Stresscount/Totalcount>userThres)
+            if(value>userThres)
             {
+                Log.d("HEEE","스트레스");
                 Notification notification3 = new NotificationCompat.Builder(this, CHANNEL_ID2)
                         .setSmallIcon(R.mipmap.ic_launcher_round)
                         .setContentTitle("Your stress level is high")
@@ -806,7 +818,6 @@ public class ForegroundService extends Service {
                         .build();
                 notification32.flags |= Notification.FLAG_AUTO_CANCEL|Notification.FLAG_INSISTENT|Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
 
-
                 //알림
                 notimanager.notify(220,notification32);
             }
@@ -814,14 +825,14 @@ public class ForegroundService extends Service {
         }
         else {
             //아무것도 데이터 없을 때
-            respondDB("분석된 스트레스 데이터 없음");
+            Log.d("HEEE","분석된 스트레스 데이터 없음");
+            //respondDB("분석된 스트레스 데이터 없음");
             return false;
         }
 
     }
     public Bundle getDatafromDB()
     {
-
 
         String sql = "SELECT * FROM " + "user_analysis" + " WHERE"
                 +" user_id = "
@@ -927,12 +938,12 @@ public class ForegroundService extends Service {
 
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d("HEEE","db연동에러_2");
             respondDB("db연동에러_2");
             return false;//"데이터베이스 연동이 되지 않습니다.(errorcode:1)";
         }
         return  true;
     }
-
 
     public boolean connectionJDBCTest(int flag,Bundle bundle) {
         String content = "";
@@ -949,7 +960,8 @@ public class ForegroundService extends Service {
             towrite.append(data_list.get(0));
             data_list.remove(0);
             towrite.append("',");
-            towrite.append(isCalli);
+            towrite.append(cali_list.get(0));
+            cali_list.remove(0);
             towrite.append(")");
             content = towrite.toString();//"insert into monitoring values (1,'2020/09/20 05:20:01','123456',1)";
         }
@@ -1011,7 +1023,7 @@ public class ForegroundService extends Service {
         try {
 
             st.executeUpdate(content);
-            respondDB("Reported");
+            //respondDB("Reported");
 
             } catch (Exception e) {
 //한번 에러나면 끊고 다시 들어가도록

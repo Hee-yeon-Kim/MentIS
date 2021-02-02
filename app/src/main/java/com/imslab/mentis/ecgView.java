@@ -69,13 +69,69 @@ public class ecgView extends Fragment {
         @Override
         public void run()
         {
-
-           //try{ Thread.sleep(1000);} catch (Exception e ){e.printStackTrace();}//1초지연
-
-
             Looper.prepare();
             ecgGraphHandler = new Handler(Looper.myLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    //super.handleMessage(msg);
+                    Bundle bundle = msg.getData();
+                    float[] Ecglist = bundle.getFloatArray("ECG");
+                    int[] Accx = bundle.getIntArray("ACCX");
+                    int[] Accy = bundle.getIntArray("ACCY");
+                    int[] Accz = bundle.getIntArray("ACCZ");
 
+                    if(Ecglist!= null) {
+                        for (float v : Ecglist) {
+                            ecglist.add(v);
+                        }
+                    }
+
+                    if(Accx!= null) {
+                        for (int v : Accx) {
+                            accXlist.add(v);
+                        }
+                    }
+                    if(Accy!= null) {
+                        for (int v : Accy) {
+                            accYlist.add(v);
+                        }
+                    }
+                    if(Accz!= null) {
+                        for (int v : Accz) {
+                            accZlist.add(v);
+                        }
+                    }
+                    //ecg 그리기
+                    if (getActivity() != null) {
+                        for (int i = 0; i < 128; i++) {
+                            try {
+                                if (ecglist.size() > 0) {
+                                    addEntry(ecglist.get(0));
+                                    ecglist.remove(0);
+                                }
+                                if (acccount > accduration) {
+                                    if (accXlist.size() > 0) {
+                                        int accx = accXlist.get(0);
+                                        int accy = accYlist.get(0);
+                                        int accz = accZlist.get(0);
+
+                                        addEntryAcc(accx, accy, accz);
+                                        accXlist.remove(0);
+                                        accYlist.remove(0);
+                                        accZlist.remove(0);
+                                        acccount = 0;
+                                    }
+                                } else {
+                                    acccount += ecgduration;
+                                }
+
+                                Thread.sleep(ecgduration);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
             };//define Handler
             Looper.loop();
         }//run method

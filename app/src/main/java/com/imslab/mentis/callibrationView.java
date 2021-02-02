@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.Locale;
 
 public class callibrationView extends AppCompatActivity {
-    private static final long START_TIME_IN_MILLIS = 300000; //5min
+    private static final long START_TIME_IN_MILLIS = 90000; //5min
     private CountDownTimer MyCountDownTimer;
     //    TODO Accept Input from user & store it in  START_TIME_IN_MILLIS
 
@@ -80,7 +80,7 @@ public class callibrationView extends AppCompatActivity {
     }
 
     private void startTimer() {
-        ((MainActivity)MainActivity.context_main).serviceClass.isCalli=1;
+
 
         MyCountDownTimer = new CountDownTimer(START_TIME_IN_MILLIS, 1000) {
             @Override
@@ -102,8 +102,8 @@ public class callibrationView extends AppCompatActivity {
                 TimerRunning = false;
                 CountDown_Tv.setText("00:00");
                 waveView.pauseAnimation();
-                ((MainActivity)MainActivity.context_main).serviceClass.isCalli=0;
-                // ((MainActivity)MainActivity.context_main).finishCalii();
+
+                //((MainActivity)MainActivity.context_main).finishCalii();
                 ((MainActivity)MainActivity.context_main).doneCali = true;
                 finish();
 
@@ -125,7 +125,6 @@ public class callibrationView extends AppCompatActivity {
     protected  void onStop()
     {
         super.onStop();
-        ((MainActivity)MainActivity.context_main).serviceClass.isCalli=0;
     }
 
 //    @Override

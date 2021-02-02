@@ -16,30 +16,45 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <service
             android:name=".ForegroundService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize">>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MiddleActivity"></activity>
-        <activity android:name=".callibrationView"></activity>
+        <activity
+            android:name=".MiddleActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".callibrationView"
+            android:configChanges="orientation|screenSize"/>
 
-        <activity android:name=".stressView"></activity>
-        <activity android:name=".reportMain"></activity>
-        <activity android:name=".GraphActivity"></activity>
-        <activity android:name=".SetAlarm"></activity>
+        <activity
+            android:name=".stressView"/>
+        <activity
+            android:name=".reportMain"
+            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".GraphActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".SetAlarm"
+            android:configChanges="orientation|screenSize"/>
 
         <activity
             android:name="com.unity3d.player.UnityPlayerActivity"
             android:process="com.unity3d.player.UnityPlayerActivity" />
-        <receiver android:name=".Alarm"></receiver>
+        <receiver android:name=".Alarm"
+            android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>

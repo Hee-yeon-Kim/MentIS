@@ -66,8 +66,14 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     // Quit Unity
     @Override protected void onDestroy ()
     {
+        Intent sendIntent = new Intent();
+        sendIntent.setPackage("com.imslab.mentis");
+        sendIntent.setAction("com.ims.mentis.feedbackend");
+        sendBroadcast(sendIntent);
+
         mUnityPlayer.destroy();
         super.onDestroy();
+
     }
 
     // Pause Unity

@@ -104,18 +104,20 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     e4View E4fragment=null;
     boolean isE4View = false;
     boolean isServer = false;
-    int raw_ecg[] = new int[128];
-    int raw_accx[] = new int[28];
-    int raw_accy[] = new int[28];
-    int raw_accz[] = new int[28];
-    float filtered_ecg[] = new float[128];
+    int[] raw_ecg = new int[128];
+    int[] raw_accx = new int[28];
+    int[] raw_accy = new int[28];
+    int[] raw_accz = new int[28];
+    int CaliFlag = 0;
+    int CaliCount=0;
+    float[] filtered_ecg = new float[128];
 
     ImageView bgapp,img_blue,dbicon,ecgconnection,e4connection;
     Switch ecgswitch, e4switch;
     LinearLayout  firstmain;
     RelativeLayout splashtext;
     Animation frombottom;
-    Button goUnity,calli,userSetting,ecgbutton,e4button,stressbutton,goAlarm;
+    Button goUnity,calli,userSetting,ecgbutton,reportbutton,stressbutton,goAlarm;
     TextView e4connected,dbtext,usertext;
     TextView bletitle;
     ListView blelist;
@@ -142,8 +144,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     private List<Float> temp_list;
     private List<Float> eda_list;
 
-    private boolean state1=false;
-    private boolean state0=false;
+    private boolean isE4Start=false, isE4OnWrist=false; //isE4Start:
 
     private String devicename="";
     private boolean isECGStart = false;
@@ -161,7 +162,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             // 서비스 객체를 전역변수로 저장
             MyBinder mb = (MyBinder) iBinder;
             serviceClass = mb.getService(); // 서비스가 제공하는 메소드 호출하여 서비스쪽 객체를 전달받을수 있다.
-            serviceClass.isCalli=0;
             isService = true;
 
         }
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         goUnity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               StartUnityFeedback();
+               //StartUnityFeedback();
                Intent intent = new Intent(MainActivity.this, MiddleActivity.class);
                startActivity(intent);
             }
@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 startActivity(intent);
             }
         });
-        e4button.setOnClickListener(new View.OnClickListener() {
+        reportbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -378,6 +378,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         // 브로드 캐스트 1000ms 씩 가장 최근 것 쏘기
 
 
+        // ECG 기기 연결 대화창 어댑터
         mDeviceAdapter = new DeviceAdapter(this);
         mDeviceAdapter.setOnDeviceClickListener(new DeviceAdapter.OnDeviceClickListener() {
             @Override
@@ -387,8 +388,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     connect(bleDevice);
                     mybleDevice = bleDevice;
                     updateLabel(bletitle,"연결완료-정보를 요청해주세요");
-
-
                 }
             }
 
@@ -398,11 +397,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     bvp_list.clear();
                     eda_list.clear();
                     temp_list.clear();
-
-                    serviceClass.isECGStart=false;
                 }
                 OffBLE();
-
             }
 
             @Override
@@ -411,7 +407,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 if (BleManager.getInstance().isConnected(bleDevice)) {
                     progressDialog.setMessage("정보 요청 중...");
                     progressDialog.show();
-
                     blenotify(bleDevice);
                 }
             }
@@ -438,7 +433,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     }
 
     public void StartUnityFeedback() {
-        if(isServer && isLogin&&doneCali) serviceClass.feedbackdataEvent(true);
+      // 테스트주석 if(isServer && isLogin&&doneCali)
+        serviceClass.feedbackdataEvent(true);
         if(!isServer) myToast("서버 연결이 되지 않았습니다.");
         if(!isLogin) myToast("로그인 해주세요.");
         if(!doneCali) myToast("Calibration 해주세요.");
@@ -475,7 +471,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         e4switch = (Switch) findViewById(R.id.e4switch);
         goUnity = (Button) findViewById((R.id.goUnity));
         ecgbutton = (Button) findViewById((R.id.ecgbutton));
-        e4button = (Button) findViewById((R.id.e4button));
+        reportbutton = (Button) findViewById((R.id.e4button));
         stressbutton = (Button) findViewById((R.id.stressbutton));
 
         calli = (Button) findViewById(R.id.calli);
@@ -491,7 +487,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         progressDialog = new ProgressDialog(this);
 
         //메인창을 보이기 위한 애니메이션
-//메인창을 보이기 위한 애니메이션
         //bgapp.animate().translationY(-1200).setDuration(800).setStartDelay(300);
         ScaleAnimation backanim = new ScaleAnimation(1,1,1,0.52f,0,0);
         backanim.setDuration(800);
@@ -520,7 +515,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 //                Bundle extras = new Bundle();
 //                //            extras.putString("USERNAME",user_name);
 //
-//                if (state0) {
+//                if (isE4Start) {
 //                    int bvp_count = u_bvp_list.size();
 //                    if (bvp_count <= 0) {
 //                        float data1[] = {0};
@@ -613,7 +608,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 if(connectionflag) {
                     Intent intent = new Intent(MainActivity.this, callibrationView.class);
                     startActivity(intent);
-                    serviceClass.isCalli = 1;
                 }
                 else
                 {
@@ -623,24 +617,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         });
     }
 
-    //캘리브레이션 리시버
-    public void setInit(boolean tmp)
-    {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(tmp)
-                {
-                    calli.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    calli.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-    }
     //버튼은 끄는 건 이벤트 없으니까 따로 다른 클래스에서 시작과 끝에서 불러주도록 이 함수를 만듦
     public void toggleGraphView(int flag,  Fragment fragment)
     {
@@ -699,7 +676,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         }
 
     }
-    public boolean finishCalii(){
+    /*public boolean finishCalii(){
 
         ProgressDialog pd = ProgressDialog.show(context_main, "", "Checking if calibration is done...");
         pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -726,7 +703,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             Toast.makeText(context_main,"Calibration 다시 시도해주세요",Toast.LENGTH_SHORT).show();
             return false;
         }
-    }
+    }*/
 
 
     private void showConnectedDevice() {
@@ -788,7 +765,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
                 myToast("ECG Patch 연결을 다시 시도해주세요.");
                 isECGStart = false;
-                serviceClass.isECGStart=false;
                 OffBLE();
             }
 
@@ -807,7 +783,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 progressDialog.dismiss();
                 isECGStart = false;
-                serviceClass.isECGStart = false;
 
                 bvp_list.clear();
                 eda_list.clear();
@@ -867,7 +842,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                if(!state0) e4switch.setChecked(false);
+                if(!isE4Start) e4switch.setChecked(false);
             }
         });
         e4Dialog = builder.create();
@@ -902,44 +877,41 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     @Override
                     public void onCharacteristicChanged(byte[] value) {
 
-
                         if(value.length!=237) return;
-                        if(!isECGStart) {
+
+                        if(!isECGStart) {// 1>> ecg 처음 받을 때
                             isECGStart = true;
-                            serviceClass.isECGStart = true;
                             currentMillis= System.currentTimeMillis();//첫시작의 시간을 저장
                             myToast("ECG PATCH의 연결이 완료되었습니다.");
                             updateImage(ecgconnection,R.mipmap.connected);
                             updateLabel(bletitle,"연결할 ECG Patch를 선택해주세요");
-                            serviceClass.isCalli= 1;
-                            bleDialog.dismiss();
-                            progressDialog.dismiss();
+                            if(bleDialog.isShowing()) bleDialog.dismiss();
+                            if(progressDialog.isShowing()) progressDialog.dismiss();
                             mybleDevice = bleDevice;
 
-                            if(state0)
-                            {
-                                //updateLabel(readytext,"센서연결이 완료되었습니다.");
-                            }
                         }
-                        //서비스 클래스 전달
-                        if(!state0||bvp_list.size()==0)//e4 가 연결되지 않을 때 연결길이 오류날때 시간갱신하기->flag로 바꾸기
+
+                        if(!isE4Start)//2>> e4 가 연결되지 않을 때 연결길이 오류날때 시간갱신하기->flag로 바꾸기
                         {
-                            currentMillis= System.currentTimeMillis();
                             connectionflag=false;
-                            // return;
                         }
                         else
                         {
-                            connectionflag =true;
-                            if(!doneCali)//캘리함?
-                            {
-                                Toast.makeText(context_main,"Calibration 을 시작합니다.", Toast.LENGTH_SHORT);
-                                startCaliView();
+                            if(!connectionflag){// 3>> 처음으로 두개 다 연결됐을 때
+                                connectionflag =true;
+                                currentMillis= System.currentTimeMillis();
+                                if(!doneCali)//캘리함?
+                                {
+                                    CaliFlag = 1;
+                                    Toast.makeText(context_main,"Calibration 을 시작합니다.", Toast.LENGTH_SHORT).show();
+                                    startCaliView();
+                                } else {
+                                    CaliFlag=0;
+                                }
                             }
                         }
 
                         StringBuilder sb = new StringBuilder();
-
 
                         int buf = 0;
                         int pre_buf = value[0];
@@ -1082,11 +1054,24 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                                 bundle.putBoolean("Flag",true);
                                 bundle.putString("DATATIME",formatDate);
                                 bundle.putString("FULLDATA",sb.toString());
+                                bundle.putInt("CALI",CaliFlag);
                                 Message message= serviceHanlder.obtainMessage();
                                 message.setData(bundle);
                                 serviceHanlder.sendMessage(message);
+                                if(CaliFlag==1) {
+                                    CaliCount++;
+                                    if(CaliCount>=60){//1분 캘리브레이션 60개 데이터 수 채우면 다시 0으로
+                                        CaliCount=0;
+                                        CaliFlag=0;
+                                    }
+                                }
                             }
                             currentMillis+=1000;
+                            //시간이 30초 이상 차이가 커지면 다시 최근시간으로 업데이트
+                            long now =  System.currentTimeMillis();
+                            if(Math.abs(now-currentMillis)>1000*30){
+                                currentMillis=now;
+                            }
 
                         }
 
@@ -1278,7 +1263,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     protected void onResume() {
         super.onResume();
 
-        showConnectedDevice();
+        //showConnectedDevice();
     }
     @Override
     protected void onPause() {
@@ -1313,13 +1298,11 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 deviceManager.connectDevice(bluetoothDevice);
                 // updateLabel(deviceNameLabel, "To: " + deviceName);
                 this.devicename=deviceName;
-                serviceClass.state0=false;
-                state0=false;
+                isE4Start=false;
             } catch (ConnectionNotAllowedException e) {
                 // This should happen only if you try to connect when allowed == false.
                 myToast("E4 Band 연결에 실패하였습니다.");
-                serviceClass.state0=false;//실패
-                state0= false;
+                isE4Start= false;
                 OffE4();
 
             }
@@ -1368,15 +1351,14 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         if (status == EmpaStatus.READY) {
             updateLabel(E4statusLabel, status.name() + " - 기기를 켜주세요.");
             // Start scanning
-            serviceClass.state0=false; //대기 및 스캔 중
-            state0=false;
+           //대기 및 스캔 중
+            isE4Start=false;
             deviceManager.startScanning();
             // The device manager has established a connection
 
         } else if (status == EmpaStatus.CONNECTED) {
 
-            serviceClass.state0=true;///연결함
-            state0= true;
+            isE4Start= true;
 
             updateLabel(E4statusLabel, devicename);
             sendNotification(0,"",4);
@@ -1385,7 +1367,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             if(isECGStart)
             {
                 // updateLabel(readytext,"센서연결이 완료되었습니다.");
-
             }
             // The device manager disconnected from a device
         } else if (status == EmpaStatus.DISCONNECTED) {//e4 disconnected
@@ -1395,8 +1376,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             OffE4();
             sendNotification(1,"E4 Band",4);
 
-            serviceClass.state0=false;//연결끝
-            state0= false;
+            isE4Start= false;
             bvp_list.clear();
             eda_list.clear();
             temp_list.clear();
@@ -1413,10 +1393,9 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     @Override
     public void didReceiveBVP(float bvp, double timestamp) {
 
-        if(!state0)
+        if(!isE4Start)
         {
-            serviceClass.state0=true;///연결함
-            state0= true;
+            isE4Start= true;
             ConnectedE4();
 
         }
@@ -1514,11 +1493,11 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
                 if (status == EmpaSensorStatus.ON_WRIST) {
 
-                    state1=true;
+                    isE4OnWrist=true;
                 }
                 else {
 
-                    state1=false;
+                    isE4OnWrist=false;
                 }
             }
         });
@@ -1641,7 +1620,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             }
         });
         doneCali = false;
-        state0= false;//또 혹시 모르니
+        isE4Start= false;//또 혹시 모르니
         connectionflag=false;
         if(serviceClass!=null) serviceClass.initialize();
 
@@ -1664,7 +1643,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         }
     }
     void ConnectedE4() {
-//연결되었을 때
+//E4 밴드 연결되었을 때
         runOnUiThread(new Runnable() {
 
             @Override

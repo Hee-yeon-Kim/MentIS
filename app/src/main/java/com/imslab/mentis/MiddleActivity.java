@@ -37,7 +37,6 @@ public class MiddleActivity extends AppCompatActivity {
     protected void onStop()
     {
         super.onStop();
-        ((MainActivity)MainActivity.context_main).serviceClass.feedbackdataEvent(false);
     }
 
 
