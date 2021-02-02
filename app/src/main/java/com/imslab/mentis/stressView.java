@@ -131,10 +131,8 @@ public class stressView extends AppCompatActivity {
     private void settingdata()
     {
         ArrayList<Integer> ecg_sqa_list=null;
-        ArrayList<Integer> ppg_sqa_list=null;
         ArrayList<Integer> HRmean_list=null;
         ArrayList<Integer>  STmean_list=null;
-        ArrayList<Integer>   RESP_list=null;
         ArrayList<Integer> Stress_list=null;
         ArrayList<String> DateTime_list=null;
         ArrayList<Entry> HRentries = new ArrayList<>();
@@ -144,10 +142,8 @@ public class stressView extends AppCompatActivity {
             if(DBData.getStringArrayList("TIME")!=null)
                 DateTime_list = DBData.getStringArrayList("TIME");
                 ecg_sqa_list = DBData.getIntegerArrayList("ECG_SQA");
-                ppg_sqa_list= DBData.getIntegerArrayList("PPG_SQA");
                 HRmean_list =  DBData.getIntegerArrayList("HRmean");
                 STmean_list =  DBData.getIntegerArrayList("STmean");
-                RESP_list =  DBData.getIntegerArrayList("RESP");
                 Stress_list= DBData.getIntegerArrayList("Stress");
 
 
@@ -156,7 +152,7 @@ public class stressView extends AppCompatActivity {
             {
 //                String[] tmp1= DateTime_list.get(i).split(" ");
 //                tmp1[1].split(":")
-                if(ppg_sqa_list.get(i)==1&&ecg_sqa_list.get(i)==1) {
+                if(ecg_sqa_list.get(i)==1) {
                     HRentries.add(new Entry(i, HRmean_list.get(i)));
                     STentries.add(new Entry(i, STmean_list.get(i)));
                     Stressentries.add(new BarEntry(i,Stress_list.get(i)+0.1f));

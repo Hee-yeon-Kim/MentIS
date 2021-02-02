@@ -57,7 +57,7 @@ public class ForegroundService extends Service {
     public boolean isECGStart=false;
     public boolean isFeedback=false;
     public boolean state0=false;
-    public  boolean isCalli = false;
+    public  int isCalli = 0;
     public boolean openDB = false;
     public int userID=-1;
     public int userGender=0;
@@ -95,7 +95,7 @@ public class ForegroundService extends Service {
         answer_list = new ArrayList<>();
         data_list= new ArrayList<>();
         time_list = new ArrayList<>();
-        isCalli = false;
+        isCalli = 0;
         openDB = false;
 
         senddatathread = new sendDataThread();
@@ -232,7 +232,7 @@ public class ForegroundService extends Service {
             time_list.clear();
 
             answer_list.clear();
-            isCalli = false;
+            isCalli = 0;
          //   openDB = false;
 
 
@@ -319,7 +319,7 @@ public class ForegroundService extends Service {
         {
             //우선 db 가 연결이 되어있냐?
 
-            while(!openDB)//30초동안 계속 서버 연결 시도 1초 간격으로
+            while(!openDB)//계속 서버 연결 시도 3초 간격으로
             {
                 openDB = connectDB();
                     if(openDB) {
@@ -330,7 +330,7 @@ public class ForegroundService extends Service {
                     {
                         ((MainActivity)MainActivity.context_main).changeDBicon(false);
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(3000);
                         }
                         catch(Exception e)
                         {
@@ -398,12 +398,12 @@ public class ForegroundService extends Service {
                         }
                         else
                         {
+                            respondDB("서버 연결을 확인해주세요.");//오류띄우기
                             if(time_list.size()>=300) // 5분동안 미연결 시 지움
                             {
                                 data_list.clear();
                                 time_list.clear();
                             }
-                            respondDB("서버 연결을 확인해주세요.");//오류띄우기
                         }
                     }
                 }
@@ -438,17 +438,17 @@ public class ForegroundService extends Service {
         if(flag){
             isFeedback=true;
             FeedbackThread th3 = new FeedbackThread() ;
+            isCalli = 2;
             th3.setDaemon(true);
             th3.start() ;
         }
         else
         {
             isFeedback=false;
+            isCalli=1;
 
         }
     }
-
-
 
     void clearUser()
     {
@@ -458,7 +458,6 @@ public class ForegroundService extends Service {
         ((MainActivity)MainActivity.context_main).isLogin=false;
         ((MainActivity)MainActivity.context_main).updateNameLabel(false);
     }
-
 
     void respondDB(final String text)
     {
@@ -623,53 +622,93 @@ public class ForegroundService extends Service {
         return true;
     }
 
-    public Boolean getRespfromDB()
-    {
+    public Boolean getRespfromDB() {
 
 
         String sql = "SELECT * FROM " + "user_feedback" + " WHERE"
+                + " user_id = "
+                + userID;
+
+        String datetime = null;
+
+        int initial = -100;
+        int current = -100;
+        try {
+            ResultSet rs = st.executeQuery(sql);
+
+            while (rs.next()) {
+                //   datetime = rs.getString("time");
+                initial = rs.getInt("initial_HR");
+                current = rs.getInt("current_HR");
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+        int gap = current - initial;
+        int score = -1;
+        if (initial != -100 && current!=-100) {
+
+            if(gap<-10){
+                score=100;
+            } else if(gap<-8){
+                score=80;
+            } else if(gap<-6){
+                score=60;
+            } else if(gap<-4){
+                score=40;
+            } else  if(gap<-2){
+                score=20;
+            } else {
+                score=0;
+            }
+        }
+
+        if(score>0) {
+            //유니티로 보내자
+            Intent sendIntent = new Intent();
+            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            sendIntent.setAction("com.ims.mentis.feedbackscore");
+            Bundle extras = new Bundle();
+            extras.putString("Time", "202102021234");
+            extras.putInt("Score", score);
+            sendIntent.putExtra("FeedbackBundle", extras);
+            sendBroadcast(sendIntent);
+            respondDB("점수 보냄 성공");
+        } else {
+            respondDB("점수 산출 시도");
+        }
+        return  true;
+    }
+
+    public int getCalliResultfromDB()
+    {
+
+
+        String sql = "SELECT * FROM " + "user_callibration" + " WHERE"
                 +" user_id = "
                 +userID
                 ;
+        int count=0;
 
-        String datetime =null;
-
-        int resp =-100;
         try {
             ResultSet rs = st.executeQuery(sql);
 
             while(rs.next()){
-                datetime = rs.getString("time");
-                resp = rs.getInt("RESP");
+                count++;
 
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return  false;
+            return 0;
         }
 
-            if(datetime!=null && resp!=-100) {
-                //유니티로 보내자
-                Intent sendIntent = new Intent();
-                sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_FROM_BACKGROUND|Intent.FLAG_INCLUDE_STOPPED_PACKAGES  );
-                sendIntent.setAction("com.ims.mentis.feedbackscore");
-                Bundle extras= new Bundle();
-                extras.putString("Time",datetime);
-                extras.putInt("Score",resp);
-                sendIntent.putExtra("FeedbackBundle",extras);
-
-                sendBroadcast(sendIntent);
 
 
-            }
-            else {
-                //respondDB( "NOD");//측정 데이터가 부족합니다.
 
-            }
-
-
-        return  true;
+        return count;
     }
 
     public Boolean StressCheckfromDB() {
@@ -773,8 +812,11 @@ public class ForegroundService extends Service {
             }
             return true;
         }
-        else return false;
-
+        else {
+            //아무것도 데이터 없을 때
+            respondDB("분석된 스트레스 데이터 없음");
+            return false;
+        }
 
     }
     public Bundle getDatafromDB()
@@ -787,10 +829,8 @@ public class ForegroundService extends Service {
                 +";";
 
         ArrayList<Integer> ecg_sqa_list=new ArrayList<>();
-        ArrayList<Integer> ppg_sqa_list=new ArrayList<>();
         ArrayList<Integer>  HRmean_list=new ArrayList<>();
         ArrayList<Integer>  STmean_list=new ArrayList<>();
-        ArrayList<Integer>  RESP_list=new ArrayList<>();
         ArrayList<Integer> Stress_list=new ArrayList<>();
         ArrayList<String> DateTime_list=new ArrayList<>();
 
@@ -802,14 +842,12 @@ public class ForegroundService extends Service {
                 DateTime_list.add(datetime);
                 Integer ecg_sqa = rs.getInt("ECG_SQA");
                 ecg_sqa_list.add(ecg_sqa);
-                Integer ppg_sqa = rs.getInt("PPG_SQA");
-                ppg_sqa_list.add(ppg_sqa);
+
                 Integer hrmean = rs.getInt("HRmean");
                 HRmean_list.add(hrmean);
                 Integer stmean = rs.getInt("STmean");
                 STmean_list.add(stmean);
-                Integer resp = rs.getInt("RESP");
-                RESP_list.add(resp);
+
                 Integer stress = rs.getInt("Stress");
                 Stress_list.add(stress);
             }
@@ -826,10 +864,8 @@ public class ForegroundService extends Service {
 
             bundle.putStringArrayList("TIME", DateTime_list);
             bundle.putIntegerArrayList("ECG_SQA", ecg_sqa_list);
-            bundle.putIntegerArrayList("PPG_SQA", ppg_sqa_list);
             bundle.putIntegerArrayList("HRmean", HRmean_list);
             bundle.putIntegerArrayList("STmean", STmean_list);
-            bundle.putIntegerArrayList("RESP", RESP_list);
             bundle.putIntegerArrayList("Stress", Stress_list);
 
            // ((MainActivity) MainActivity.context_main).startStressView(bundle,true);
@@ -913,8 +949,8 @@ public class ForegroundService extends Service {
             towrite.append(data_list.get(0));
             data_list.remove(0);
             towrite.append("',");
-            if (isCalli) towrite.append("1)");
-            else towrite.append("0)");
+            towrite.append(isCalli);
+            towrite.append(")");
             content = towrite.toString();//"insert into monitoring values (1,'2020/09/20 05:20:01','123456',1)";
         }
         else if(flag==2) //자가진단테스트 보내기
@@ -928,7 +964,7 @@ public class ForegroundService extends Service {
             }
 
             StringBuilder towrite = new StringBuilder();
-            if(mode==1)
+            if(mode==2)
             {
                 towrite.append("insert into user_pss values (");
                 towrite.append(userID);//id
@@ -949,16 +985,6 @@ public class ForegroundService extends Service {
                 towrite.append(stringdata[3]);
                 towrite.append(",");
                 towrite.append(stringdata[4]);
-                towrite.append(",");
-                towrite.append(stringdata[5]);
-                towrite.append(",");
-                towrite.append(stringdata[6]);
-                towrite.append(",");
-                towrite.append(stringdata[7]);
-                towrite.append(",");
-                towrite.append(stringdata[8]);
-                towrite.append(",");
-                towrite.append(stringdata[9]);
             }
             else {
                 towrite.append("insert into user_question values (");
@@ -985,6 +1011,7 @@ public class ForegroundService extends Service {
         try {
 
             st.executeUpdate(content);
+            respondDB("Reported");
 
             } catch (Exception e) {
 //한번 에러나면 끊고 다시 들어가도록

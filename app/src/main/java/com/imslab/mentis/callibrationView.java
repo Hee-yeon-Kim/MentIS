@@ -80,7 +80,7 @@ public class callibrationView extends AppCompatActivity {
     }
 
     private void startTimer() {
-        ((MainActivity)MainActivity.context_main).setIsCalli(true);
+        ((MainActivity)MainActivity.context_main).serviceClass.isCalli=1;
 
         MyCountDownTimer = new CountDownTimer(START_TIME_IN_MILLIS, 1000) {
             @Override
@@ -102,8 +102,9 @@ public class callibrationView extends AppCompatActivity {
                 TimerRunning = false;
                 CountDown_Tv.setText("00:00");
                 waveView.pauseAnimation();
-                ((MainActivity)MainActivity.context_main).setIsCalli(false);
-               // ((MainActivity)MainActivity.context_main).setInit(false);
+                ((MainActivity)MainActivity.context_main).serviceClass.isCalli=0;
+                // ((MainActivity)MainActivity.context_main).finishCalii();
+                ((MainActivity)MainActivity.context_main).doneCali = true;
                 finish();
 
                 //   MyProgressBar.setProgress(100);
@@ -124,7 +125,7 @@ public class callibrationView extends AppCompatActivity {
     protected  void onStop()
     {
         super.onStop();
-        ((MainActivity)MainActivity.context_main).setIsCalli(false);
+        ((MainActivity)MainActivity.context_main).serviceClass.isCalli=0;
     }
 
 //    @Override

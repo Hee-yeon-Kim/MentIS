@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     public static Context context_main; // context 변수 선언
     Butterworth butterworth;
     private boolean connectionflag = false;
-    private boolean doneCali = false;
+    public boolean doneCali = false;
 
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
             // 서비스 객체를 전역변수로 저장
             MyBinder mb = (MyBinder) iBinder;
             serviceClass = mb.getService(); // 서비스가 제공하는 메소드 호출하여 서비스쪽 객체를 전달받을수 있다.
-            setIsCalli(false);
+            serviceClass.isCalli=0;
             isService = true;
 
         }
@@ -333,17 +333,9 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         goUnity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(isServer && isLogin)
-//                {
-//                    //serviceClass.feedbackdataEvent(true);
-                    Intent intent = new Intent(MainActivity.this, MiddleActivity.class);
-                    startActivity(intent);
-               // }
-//                else
-//                {
-                if(!isServer) myToast("서버 연결이 되지 않았습니다.");
-                if(!isLogin) myToast("로그인 해주세요.");
-//                }
+               StartUnityFeedback();
+               Intent intent = new Intent(MainActivity.this, MiddleActivity.class);
+               startActivity(intent);
             }
         });
         goAlarm.setOnClickListener(new View.OnClickListener() {
@@ -444,6 +436,14 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
 
     }
+
+    public void StartUnityFeedback() {
+        if(isServer && isLogin&&doneCali) serviceClass.feedbackdataEvent(true);
+        if(!isServer) myToast("서버 연결이 되지 않았습니다.");
+        if(!isLogin) myToast("로그인 해주세요.");
+        if(!doneCali) myToast("Calibration 해주세요.");
+    }
+
     public void set6(){
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -613,7 +613,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 if(connectionflag) {
                     Intent intent = new Intent(MainActivity.this, callibrationView.class);
                     startActivity(intent);
-                    serviceClass.isCalli = true;
+                    serviceClass.isCalli = 1;
                 }
                 else
                 {
@@ -699,10 +699,35 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         }
 
     }
-    public void setIsCalli(boolean isCalli)
-    {
-        serviceClass.isCalli= isCalli;
+    public boolean finishCalii(){
+
+        ProgressDialog pd = ProgressDialog.show(context_main, "", "Checking if calibration is done...");
+        pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+               if(!doneCali){
+                   Toast.makeText(context_main,"Calibration 다시 시도해주세요",Toast.LENGTH_SHORT).show();
+               }
+
+            }
+        });
+
+        while (serviceClass.getCalliResultfromDB()<=0){
+            if(!pd.isShowing()) break;
+        }
+        int calliEnd=serviceClass.getCalliResultfromDB();
+        if(calliEnd>0){
+            Toast.makeText(context_main,"Completed",Toast.LENGTH_SHORT).show();
+            doneCali=true;
+            serviceClass.isCalli = 0;
+            pd.dismiss();
+            return  true;
+        } else {
+            Toast.makeText(context_main,"Calibration 다시 시도해주세요",Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
+
 
     private void showConnectedDevice() {
         List<BleDevice> deviceList = BleManager.getInstance().getAllConnectedDevice();
@@ -886,7 +911,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             myToast("ECG PATCH의 연결이 완료되었습니다.");
                             updateImage(ecgconnection,R.mipmap.connected);
                             updateLabel(bletitle,"연결할 ECG Patch를 선택해주세요");
-                            setIsCalli(true);
+                            serviceClass.isCalli= 1;
                             bleDialog.dismiss();
                             progressDialog.dismiss();
                             mybleDevice = bleDevice;
@@ -908,8 +933,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             connectionflag =true;
                             if(!doneCali)//캘리함?
                             {
+                                Toast.makeText(context_main,"Calibration 을 시작합니다.", Toast.LENGTH_SHORT);
                                 startCaliView();
-                                doneCali = true;
                             }
                         }
 

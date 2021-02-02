@@ -12,6 +12,7 @@ public class MiddleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MainActivity)MainActivity.context_main).StartUnityFeedback();
         try {
             activityWasJustCreated = true;
             Intent intent = new Intent(this, UnityPlayerActivity.class);

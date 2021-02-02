@@ -34,11 +34,11 @@ public class postReport extends Fragment {
     {
 
         //라디오 그룹
-        post_radioGroup1 = (RadioGroup) view.findViewById(R.id.post_radioGroup1);
-        post_radioGroup2 = (RadioGroup) view.findViewById(R.id.post_radioGroup2);
-        post_radioGroup3 = (RadioGroup) view.findViewById(R.id.post_radioGroup3);
-        post_radioGroup4 = (RadioGroup) view.findViewById(R.id.post_radioGroup4);
-        post_radioGroup5 = (RadioGroup) view.findViewById(R.id.post_radioGroup5);
+        post_radioGroup1 = (RadioGroup) view.findViewById(R.id.radioGroup1);
+        post_radioGroup2 = (RadioGroup) view.findViewById(R.id.radioGroup2);
+        post_radioGroup3 = (RadioGroup) view.findViewById(R.id.radioGroup3);
+        post_radioGroup4 = (RadioGroup) view.findViewById(R.id.radioGroup4);
+        post_radioGroup5 = (RadioGroup) view.findViewById(R.id.radioGroup5);
 
 
 
@@ -61,91 +61,91 @@ public class postReport extends Fragment {
         int ans1=0,ans2=0,ans3=0,ans4=0,ans5=0;
         int rb1 = post_radioGroup1.getCheckedRadioButtonId();
         switch (rb1){
-            case R.id.pq1_1:
+            case R.id.q1_1:
                 ans1=1;
                 break;
-            case R.id.pq1_2:
+            case R.id.q1_2:
                 ans1=2;
                 break;
-            case R.id.pq1_3:
+            case R.id.q1_3:
                 ans1=3;
                 break;
-            case R.id.pq1_4:
+            case R.id.q1_4:
                 ans1=4;
                 break;
-            case R.id.pq1_5:
+            case R.id.q1_5:
                 ans1=5;
                 break;
         }
         int rb2 = post_radioGroup2.getCheckedRadioButtonId();
         switch (rb2){
-            case R.id.pq2_1:
+            case R.id.q2_1:
                 ans2=1;
                 break;
-            case R.id.pq2_2:
+            case R.id.q2_2:
                 ans2=2;
                 break;
-            case R.id.pq2_3:
+            case R.id.q2_3:
                 ans2=3;
                 break;
-            case R.id.pq2_4:
+            case R.id.q2_4:
                 ans2=4;
                 break;
-            case R.id.pq2_5:
+            case R.id.q2_5:
                 ans2=5;
                 break;
         }
         int rb3 = post_radioGroup3.getCheckedRadioButtonId();
         switch (rb3){
-            case R.id.pq3_1:
+            case R.id.q3_1:
                 ans3=1;
                 break;
-            case R.id.pq3_2:
+            case R.id.q3_2:
                 ans3=2;
                 break;
-            case R.id.pq3_3:
+            case R.id.q3_3:
                 ans3=3;
                 break;
-            case R.id.pq3_4:
+            case R.id.q3_4:
                 ans3=4;
                 break;
-            case R.id.pq3_5:
+            case R.id.q3_5:
                 ans3=5;
                 break;
         }
         int rb4 = post_radioGroup4.getCheckedRadioButtonId();
         switch (rb4){
-            case R.id.pq4_1:
+            case R.id.q4_1:
                 ans4=1;
                 break;
-            case R.id.pq4_2:
+            case R.id.q4_2:
                 ans4=2;
                 break;
-            case R.id.pq4_3:
+            case R.id.q4_3:
                 ans4=3;
                 break;
-            case R.id.pq4_4:
+            case R.id.q4_4:
                 ans4=4;
                 break;
-            case R.id.pq4_5:
+            case R.id.q4_5:
                 ans4=5;
                 break;
         }
         int rb5 = post_radioGroup5.getCheckedRadioButtonId();
         switch (rb5){
-            case R.id.pq5_1:
+            case R.id.q5_1:
                 ans5=1;
                 break;
-            case R.id.pq5_2:
+            case R.id.q5_2:
                 ans5=2;
                 break;
-            case R.id.pq5_3:
+            case R.id.q5_3:
                 ans5=3;
                 break;
-            case R.id.pq5_4:
+            case R.id.q5_4:
                 ans5=4;
                 break;
-            case R.id.pq5_5:
+            case R.id.q5_5:
                 ans5=5;
                 break;
         }
