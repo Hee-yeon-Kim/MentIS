@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.Locale;
 
 public class callibrationView extends AppCompatActivity {
-    private static final long START_TIME_IN_MILLIS = 90000; //5min
+    private static final long START_TIME_IN_MILLIS = 60000; //5min
     private CountDownTimer MyCountDownTimer;
     //    TODO Accept Input from user & store it in  START_TIME_IN_MILLIS
 

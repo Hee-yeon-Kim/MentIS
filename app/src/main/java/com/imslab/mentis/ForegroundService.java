@@ -683,8 +683,10 @@ public class ForegroundService extends Service {
         if(score>0) {
             //유니티로 보내자
             Intent sendIntent = new Intent();
-            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            //sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            sendIntent.setPackage("com.unity3d.player");
             sendIntent.setAction("com.ims.mentis.feedbackscore");
+
             Bundle extras = new Bundle();
             extras.putString("Time", "202102021234");
             extras.putInt("Score", score);
