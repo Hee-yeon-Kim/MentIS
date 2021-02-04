@@ -29,7 +29,7 @@ public class reportMain extends AppCompatActivity {
             }
         });
         mTabLayout = (TabLayout) findViewById(R.id.layout_tab);
-        mTabLayout.addTab(mTabLayout.newTab().setText("Then-Test"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("PSS5-Test"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Post-Test"));
 
         mViewPager = (ViewPager) findViewById(R.id.pager_content);

@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -66,7 +67,7 @@ public class ForegroundService extends Service {
     public int userAge=0;
     public float userThres=1/2f;
     int readcount=0;
-
+    int TEST=0;
     Connection con = null;
 
     Statement st = null;
@@ -86,6 +87,16 @@ public class ForegroundService extends Service {
 
 
     static ForegroundService foregroundService;
+//    private void TEST(int fla){
+//        Intent sendIntent = new Intent();
+//        sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_FROM_BACKGROUND|Intent.FLAG_INCLUDE_STOPPED_PACKAGES);        // sendIntent.setPackage("com.ims.e4receiver");
+//        sendIntent.setAction("com.ims.mentis.feedbackscore");
+//        Bundle extras = new Bundle();
+//        extras.putInt("Score", fla*20);
+//        sendIntent.putExtras(extras);
+//        sendBroadcast(sendIntent);
+//    }
+
 
     @Override
     public void onCreate() {
@@ -143,16 +154,6 @@ public class ForegroundService extends Service {
                     e.printStackTrace();
                 }
 
-            }
-
-        };
-
-        stressCheckTimer = new Timer();
-        stressCheckTask = new TimerTask() {
-            @Override
-            public void run() {
-                // 반복실행할 구문
-                StressCheckfromDB();
             }
 
         };
@@ -223,8 +224,30 @@ public class ForegroundService extends Service {
         initialize();
 
         timer.schedule(TT, 1000*60*60, 1000*60*60); //Timer 실행 설문지
+        stressCheckTimer = new Timer();
+        stressCheckTask = new TimerTask() {
+            @Override
+            public void run() {
+                // 반복실행할 구문
+                StressCheckfromDB();
+            }
+
+        };
         stressCheckTimer.schedule(stressCheckTask, 1000*60*30, 1000*60*30); //30분마다 스트레스 체크 Timer 실행
         readcount = 0;//read count 셋팅
+
+
+//        Timer TESTTimer = new Timer();
+//        TimerTask timerTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//                // 반복실행할 구문
+//                TEST(TEST++);if(TEST>4) TEST=0;
+//                Log.d("Heee", String.valueOf(TEST));
+//            }
+//
+//        };
+//        TESTTimer.schedule(timerTask,1000*5,1000*10);
 
         return mBinder;
     }
@@ -304,6 +327,7 @@ public class ForegroundService extends Service {
             if(connectionName())
             {
                 ((MainActivity)MainActivity.context_main).isLogin = true;
+                ((MainActivity)MainActivity.context_main).doneCali=false;
                 ((MainActivity)MainActivity.context_main).updateNameLabel(true);
             }
             else
@@ -375,7 +399,7 @@ public class ForegroundService extends Service {
 
                         int willsend = time_list.size();//애초에 둘다 연결될때 이 리스트가 채워지니깐
                         Log.d("HEEE",String.valueOf(time_list.size()));
-                        if(willsend>30)//30초 단위로 보냄
+                        if(willsend>10)//10초 단위로 보냄
                         {
                             for (int i = 0; i < willsend; i++) {
 
@@ -680,10 +704,11 @@ public class ForegroundService extends Service {
             }
         }
 
-        if(score>0) {
+        if(score>=0) {
             //유니티로 보내자
             Intent sendIntent = new Intent();
             sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+           // sendIntent.setPackage("com.ims.e4receiver");
             sendIntent.setAction("com.ims.mentis.feedbackscore");
 
             Bundle extras = new Bundle();
@@ -691,6 +716,7 @@ public class ForegroundService extends Service {
             extras.putInt("Score", score);
             sendIntent.putExtras(extras);
             sendBroadcast(sendIntent);
+            respondDB("Score Updated");
             Log.d("HEEE","점수 보냄 성공 점수: "+String.valueOf(score));
         } else {
             Log.d("HEEE","점수 산출 실패");
@@ -950,6 +976,9 @@ public class ForegroundService extends Service {
         String content = "";
 
         if(flag==1) {//데이터 보내기
+
+ //"INSERT INTO user (name,password,sex,age,height,weight) VALUES ('" + user_name + "','"+user_pw+"',"+userGender+','+userAge+','+"170,60)";
+//"INSERT INTO monitoring (user_id,time,data,calibration) VALUES ('" + user_name + "','"+user_pw+"',"+userGender+','+userAge+','+"170,60)";
 
             StringBuilder towrite = new StringBuilder();
             towrite.append("insert into monitoring values (");

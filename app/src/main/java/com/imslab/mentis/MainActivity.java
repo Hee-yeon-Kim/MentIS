@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     };
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -254,12 +255,12 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                                     return;
 
                                 }
-                                if(tmp.length()>6)
-                                {
-                                    Toast.makeText(MainActivity.this, "이름을 다시 설정해주세요", Toast.LENGTH_SHORT).show();
-                                    isLogin=false;
-                                    return;
-                                }
+//                                if(tmp.length()>6)
+//                                {
+//                                    Toast.makeText(MainActivity.this, "이름을 다시 설정해주세요", Toast.LENGTH_SHORT).show();
+//                                    isLogin=false;
+//                                    return;
+//                                }
                                 user_name = tmp;
 
                                 serviceClass.user_name = user_name;
@@ -278,6 +279,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         ecgswitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(ecgswitch.isChecked())
                 {
 
@@ -305,6 +307,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         e4switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(e4switch.isChecked())
                 {
                     if(!isServer)
@@ -1575,7 +1578,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 mybleDevice = null;
             }
 
-            doneCali = false;
             isECGStart = false;
         }
         catch (Exception e)
@@ -1630,7 +1632,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
             }
         });
-        doneCali = false;
+
         isE4Start= false;//또 혹시 모르니
         connectionflag=false;
         if(serviceClass!=null) serviceClass.initialize();
