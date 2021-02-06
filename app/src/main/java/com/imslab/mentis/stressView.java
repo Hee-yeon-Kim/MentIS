@@ -182,7 +182,7 @@ public class stressView extends AppCompatActivity {
            //text.setText(tmp.toString());
         }
     }
-
+//시간축
     public class XAxisValueFormatter extends ValueFormatter
     {
         private ArrayList<String> mValues =null;
@@ -302,9 +302,10 @@ public class stressView extends AppCompatActivity {
         x.setValueFormatter(new XAxisValueFormatter(timelist));
         x.setTextColor(Color.BLACK);
         x.setDrawGridLines(false);
-        x.setSpaceMin(1.9f);
-
+        //x.setSpaceMin(1.9f);
+      //  x.setXOffset(-1.9f);
         x.setPosition(XAxis.XAxisPosition.BOTTOM);
+
         Legend legend = STRESSChart.getLegend();
         legend.setEnabled(false);
 

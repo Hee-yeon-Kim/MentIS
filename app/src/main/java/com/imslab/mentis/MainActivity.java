@@ -154,6 +154,8 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
     Butterworth butterworth;
     private boolean connectionflag = false;
     public boolean doneCali = false;
+    private boolean myE4disconnect = false;
+    private boolean myECGdisconnect = false;
 
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -299,6 +301,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 }
                 else
                 {
+                    myECGdisconnect=true;
                     OffBLE();
                 }
             }
@@ -333,6 +336,7 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                     if (deviceManager != null) {
                         deviceManager.disconnect();
                     }
+                    myE4disconnect=true;
                     OffE4();
 
                 }
@@ -801,14 +805,15 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                 bvp_list.clear();
                 eda_list.clear();
                 temp_list.clear();
-                OffBLE();
                 if (isActiveDisConnected) {
                     myToast(getString(R.string.active_disconnected));
                 } else {
                     myToast(getString(R.string.disconnected));
                     ObserverManager.getInstance().notifyObserver(bleDevice);
-                    sendNotification(1,bleDevice.getName(),3);
+                    if(!myECGdisconnect) sendNotification(1,bleDevice.getName(),3);
                 }
+                OffBLE();
+                myECGdisconnect=false;
             }
         });
     }
@@ -1387,8 +1392,9 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
 
             myToast("E4 Band 연결이 해제되었습니다.");
 
+            if(!myE4disconnect) sendNotification(1,"E4 Band",4);
+            myE4disconnect=false;
             OffE4();
-            sendNotification(1,"E4 Band",4);
 
             isE4Start= false;
             bvp_list.clear();
@@ -1636,7 +1642,6 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
         isE4Start= false;//또 혹시 모르니
         connectionflag=false;
         if(serviceClass!=null) serviceClass.initialize();
-
     }
 
     public void myToast(final String string)

@@ -12,7 +12,7 @@ public class MiddleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean b=((MainActivity)MainActivity.context_main).StartUnityFeedback();
+      boolean b=((MainActivity)MainActivity.context_main).StartUnityFeedback();
         if(!b) finish();
         else {
             try {
@@ -23,7 +23,7 @@ public class MiddleActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Log.d("heeeee", "아아아아");
             }
-        }
+       }
     }
     @Override
     protected void onResume() {

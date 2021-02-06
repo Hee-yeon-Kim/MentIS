@@ -284,8 +284,6 @@ public class ForegroundService extends Service {
         public void run() {
             while(isFeedback)
             {
-                getRespfromDB();//10초마다
-
                 try{
                     Thread.sleep(10000);
                 }
@@ -293,6 +291,7 @@ public class ForegroundService extends Service {
                 {
                     e.printStackTrace();
                 }
+                getRespfromDB();//10초마다
             }
         }
     }
@@ -475,6 +474,9 @@ public class ForegroundService extends Service {
             registerReceiver(UnitybroadcastReceiver,filter);
 
             ((MainActivity)MainActivity.context_main).CaliFlag=2;//캘리브레이션 모드 2로
+            //우선 0 보내기 => analyzing... 뜨고 있도록
+            broadcastTOUnity(0);
+
             FeedbackThread th3 = new FeedbackThread();
             th3.setDaemon(true);
             th3.start() ;
@@ -497,6 +499,14 @@ public class ForegroundService extends Service {
         user_name="no_name";
         ((MainActivity)MainActivity.context_main).isLogin=false;
         ((MainActivity)MainActivity.context_main).updateNameLabel(false);
+    }
+
+    void broadcastTOUnity(int value){
+        Intent sendIntent = new Intent("com.heeyeon.feedbackreceiver");
+        Bundle extras = new Bundle();
+        extras.putInt("Score", value);
+        sendIntent.putExtras(extras);
+        sendBroadcast(sendIntent);
     }
 
     void respondDB(final String text)
@@ -680,7 +690,7 @@ public class ForegroundService extends Service {
                 initial = rs.getInt("initial_HR");
                 current = rs.getInt("current_HR");
             }
-        } catch (SQLException e) {
+         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
@@ -688,35 +698,22 @@ public class ForegroundService extends Service {
         int gap = current - initial;
         int score = -1;
         if (initial != -100 && current!=-100) {
-
-            if(gap<-10){
-                score=100;
-            } else if(gap<-8){
-                score=80;
-            } else if(gap<-6){
-                score=60;
-            } else if(gap<-4){
-                score=40;
-            } else  if(gap<-2){
-                score=20;
+            if (gap < -10) {
+                score = 4;
+            } else if (gap < 0) {
+                score = 3;
+            } else if (gap > 5) {
+                score = 1;
             } else {
-                score=0;
+                score = 2;
             }
-        }
+        } else score=0;
 
         if(score>=0) {
             //유니티로 보내자
-            Intent sendIntent = new Intent();
-            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-           // sendIntent.setPackage("com.ims.e4receiver");
-            sendIntent.setAction("com.ims.mentis.feedbackscore");
-
-            Bundle extras = new Bundle();
-            extras.putString("Time", "202102021234");
-            extras.putInt("Score", score);
-            sendIntent.putExtras(extras);
-            sendBroadcast(sendIntent);
-            respondDB("Score Updated");
+            //이거 절대 빼고 유니티에서도 manifast없애고 app-debug aar만 있으면 됨 이것땜에 계속 안됐음sendIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            // sendIntent.setPackage("com.ims.e4receiver");
+            broadcastTOUnity(score);
             Log.d("HEEE","점수 보냄 성공 점수: "+String.valueOf(score));
         } else {
             Log.d("HEEE","점수 산출 실패");
@@ -981,7 +978,7 @@ public class ForegroundService extends Service {
 //"INSERT INTO monitoring (user_id,time,data,calibration) VALUES ('" + user_name + "','"+user_pw+"',"+userGender+','+userAge+','+"170,60)";
 
             StringBuilder towrite = new StringBuilder();
-            towrite.append("insert into monitoring values (");
+            towrite.append("INSERT INTO monitoring (user_id,time,data,calibration) VALUES (");
             towrite.append(userID);//id
             towrite.append(",'");
             towrite.append(time_list.get(0));//String
@@ -1008,7 +1005,7 @@ public class ForegroundService extends Service {
             StringBuilder towrite = new StringBuilder();
             if(mode==2)
             {
-                towrite.append("insert into user_pss values (");
+                towrite.append("INSERT INTO user_pss (user_id,time,age,sex,Q1,Q2,Q3,Q4,Q5) VALUES (");
                 towrite.append(userID);//id
                 towrite.append(",'");
                 towrite.append(reporttime);//report time 문자열
@@ -1029,7 +1026,8 @@ public class ForegroundService extends Service {
                 towrite.append(stringdata[4]);
             }
             else {
-                towrite.append("insert into user_question values (");
+                //INSERT INTO user_pss (user_id,time,age,sex,Q1,Q2,Q3) VALUES (
+                towrite.append("INSERT INTO user_question (user_id,time,Q1,Q2,Q3,Q4,Q5) VALUES (");
 
                 towrite.append(userID);//id
                 towrite.append(",'");
