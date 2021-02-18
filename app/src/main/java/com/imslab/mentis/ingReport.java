@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+//pss 조사
 public class ingReport extends Fragment {
 
     private RadioGroup radioGroup1,radioGroup2,radioGroup3,radioGroup4,radioGroup5;
@@ -150,6 +150,11 @@ public class ingReport extends Fragment {
             case R.id.pq5_5:
                 ans5=5;
                 break;
+        }
+        //완료 후 만약 빈칸존재 한다면 받아치기
+        if(ans1==0||ans2==0||ans3==0||ans4==0||ans5==0){
+            ((MainActivity) MainActivity.context_main).myToast("빈칸을 모두 채워주세요");
+            return;
         }
         //완료
         Bundle bundle = new Bundle();

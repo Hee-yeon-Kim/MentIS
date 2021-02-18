@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+//실험 후 종료 시행
 public class postReport extends Fragment {
 
     private RadioGroup post_radioGroup1,post_radioGroup2,post_radioGroup3,post_radioGroup4,post_radioGroup5;
@@ -149,7 +150,12 @@ public class postReport extends Fragment {
                 ans5=5;
                 break;
         }
-        //완료
+        //완료 후 만약 빈칸존재 한다면 받아치기
+        if(ans1==0||ans2==0||ans3==0||ans4==0||ans5==0){
+            ((MainActivity) MainActivity.context_main).myToast("빈칸을 모두 채워주세요");
+            return;
+        }
+        //
         Bundle bundle = new Bundle();
         int tmp[] = new int[5];
         tmp[0]=ans1-1;

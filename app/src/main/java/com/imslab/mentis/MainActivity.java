@@ -919,11 +919,13 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             if(!connectionflag){// 3>> 처음으로 두개 다 연결됐을 때
                                 connectionflag =true;
                                 currentMillis= System.currentTimeMillis();
+                                //doneCali = serviceClass.getCalliResultfromDB();
                                 if(!doneCali)//캘리함?
                                 {
                                     CaliFlag = 1;
-                                    Toast.makeText(context_main,"Calibration 을 시작합니다.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context_main, "Calibration 을 시작합니다.", Toast.LENGTH_SHORT).show();
                                     startCaliView();
+
                                 } else {
                                     CaliFlag=0;
                                 }
@@ -962,11 +964,11 @@ public class MainActivity extends AppCompatActivity  implements EmpaDataDelegate
                             int acc1 = (value[5 * c + 128]);
                             acc1= (int)((acc1 << 2) + (value[5 * c + 128 + 1] >> 6));
                             int acc2 = (int)(value[5 * c + 128 + 1] & 0b00111111);
-                            acc2= (int)(acc2+ (value[5 * c + 128 + 2 ] >> 4));
+                            acc2= (int)((acc2<<4)+ (value[5 * c + 128 + 2 ] >> 4));
                             int acc3 = (int)(value[5 * c + 128 + 2] & 0b00001111);
-                            acc3 = (int)(acc3 + (value[5 * c + 128 + 3] >> 2));
+                            acc3 = (int)((acc3<<6) + (value[5 * c + 128 + 3] >> 2));
                             int acc4 = (int)(value[5 * c + 128 + 3] & 0b00000011);
-                            acc4 = (int)(acc4+ (value[5 * c + 128 + 4] >> 0));
+                            acc4 = (int)((acc4<<8)+ (value[5 * c + 128 + 4] >> 0));
 
                             if (acc1 > 511) acc1 = acc1 - 1023;
                             if (acc2 > 511) acc2 = acc2 - 1023;

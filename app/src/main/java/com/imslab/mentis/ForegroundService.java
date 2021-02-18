@@ -328,6 +328,9 @@ public class ForegroundService extends Service {
                 ((MainActivity)MainActivity.context_main).isLogin = true;
                 ((MainActivity)MainActivity.context_main).doneCali=false;
                 ((MainActivity)MainActivity.context_main).updateNameLabel(true);
+                boolean tmp = getCaliResultfromDB();
+                ((MainActivity)MainActivity.context_main).doneCali = tmp;
+                Log.d("HEEE","칼리"+String.valueOf(tmp));
             }
             else
             {
@@ -727,30 +730,36 @@ public class ForegroundService extends Service {
             feedbackdataEvent(false);
         }
     };
-//    public int getCalliResultfromDB()
-//    {
-//
-//
-//        String sql = "SELECT * FROM " + "user_callibration" + " WHERE"
-//                +" user_id = "
-//                +userID
-//                ;
-//        int count=0;
-//
-//        try {
-//            ResultSet rs = st.executeQuery(sql);
-//
-//            while(rs.next()){
-//                count++;
-//
-//            }
-//        } catch (SQLException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//            return 0;
-//        }
-//           return count;
-//    }
+
+    public boolean getCaliResultfromDB()
+    {
+
+        Log.d("HEEE","겟칼리 진입 아이디"+String.valueOf(userID));
+        String sql = "SELECT * FROM " + "user_calibration" + " WHERE"
+                +" user_id = "
+                +userID
+                ;
+        int count=0;
+
+        try {
+            ResultSet rs = st.executeQuery(sql);
+
+            while(rs.next()){
+                count++;
+            }
+            Log.d("HEEE","칼리횟수 :"+String.valueOf(count));
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+           if(count>0){
+               return true;
+           } else {
+               return false;
+           }
+    }
 
     public Boolean StressCheckfromDB() {
 
@@ -1097,7 +1106,7 @@ public class ForegroundService extends Service {
 
 
 //        finally {
-//
+
 //            if(null != con) {
 //
 //                try {
